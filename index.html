@@ -1,0 +1,1868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pharmiverse Locum Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0c10;--s1:#0f1117;--s2:#161a22;--s3:#1d2230;
+  --border:#252b38;--border2:#1d2230;
+  --text:#dde2ec;--muted:#5c6478;--subtle:#8892a4;
+  --teal:#00c4a0;--teal2:#00e8bc;--tealfade:rgba(0,196,160,0.08);
+  --red:#f04255;--amber:#f5a623;--blue:#3b9eff;
+  --r:10px;--r2:14px;
+  --serif:'Instrument Serif',serif;--sans:'Geist',sans-serif;--mono:'Geist Mono',monospace;
+}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;min-height:100vh}
+::selection{background:rgba(0,196,160,0.25)}
+
+/* ── DESKTOP sidebar layout ── */
+#app-desktop{display:flex;min-height:100vh}
+#app-mobile{display:none}
+.rail{width:220px;flex-shrink:0;background:var(--s1);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:20px 0;position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:10}
+.rail-logo{padding:0 18px 22px;border-bottom:1px solid var(--border2);margin-bottom:10px}
+.rail-wordmark{font-family:var(--serif);font-size:19px;color:var(--teal);letter-spacing:-0.3px;font-style:italic}
+.rail-sub{font-size:9.5px;letter-spacing:1.8px;text-transform:uppercase;color:var(--muted);margin-top:1px}
+.nav-link{display:flex;align-items:center;gap:9px;padding:12px 18px;font-size:14px;color:var(--muted);cursor:pointer;border-left:3px solid transparent;position:relative;user-select:none}
+.nav-link.on{color:var(--teal);background:var(--tealfade);border-left-color:var(--teal)}
+.nav-badge{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:var(--red);color:#fff;font-size:9.5px;padding:1px 5px;border-radius:99px;font-weight:600}
+.nav-badge.amber{background:var(--amber);color:#000}
+.rail-foot{margin-top:auto;padding:14px 18px 0;border-top:1px solid var(--border2);font-size:10.5px;color:var(--muted);line-height:1.6;font-family:var(--mono)}
+.main{flex:1;overflow-y:auto;background:var(--bg);margin-left:220px;min-height:100vh}
+.page{padding:28px 32px;max-width:1060px;display:none}
+.page.active{display:block}
+
+/* ── MOBILE layout ── */
+#mob-topbar{background:var(--s1);border-bottom:1px solid var(--border);padding:0 16px;height:50px;display:flex;align-items:center;justify-content:space-between;position:fixed;top:0;left:0;right:0;z-index:100}
+#mob-topbar-title{font-family:var(--serif);font-size:19px;color:var(--teal);font-style:italic}
+#mob-menu-btn{background:var(--s2);border:1px solid var(--border);color:var(--text);font-size:18px;width:40px;height:40px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+#mob-main{margin-top:50px;margin-bottom:60px;overflow-y:auto;background:var(--bg);min-height:calc(100vh - 110px)}
+#mob-main .page{padding:14px 12px;display:none}
+#mob-main .page.active{display:block}
+#mob-bottomnav{position:fixed;bottom:0;left:0;right:0;height:60px;background:var(--s1);border-top:1px solid var(--border);display:flex;align-items:stretch;z-index:100}
+.mob-nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--muted);cursor:pointer;font-size:9px;letter-spacing:.3px;text-transform:uppercase;border:none;background:none;padding:0;position:relative;-webkit-tap-highlight-color:transparent}
+.mob-nav-btn.on{color:var(--teal)}
+.mob-nav-btn span.icon{font-size:18px;line-height:1}
+.mob-nav-dot{position:absolute;top:8px;right:calc(50% - 14px);width:7px;height:7px;background:var(--red);border-radius:50%;display:none}
+.mob-nav-dot.amber{background:var(--amber)}
+/* drawer menu for extra pages */
+#mob-drawer{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.75)}
+#mob-drawer-inner{position:absolute;right:0;top:0;bottom:0;width:240px;background:var(--s1);border-left:1px solid var(--border);padding:60px 0 20px;overflow-y:auto}
+#mob-drawer .nav-link{padding:16px 20px;font-size:15px}
+
+/* ── Shared component styles ── */
+.ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap}
+.ph-left{}
+.ph-title{font-family:var(--serif);font-size:24px;font-style:italic;color:var(--text);line-height:1.1}
+.ph-sub{font-size:12px;color:var(--muted);margin-top:3px}
+.stat-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px}
+.stat{background:var(--s2);border:1px solid var(--border);border-radius:var(--r2);padding:14px 16px}
+.stat-l{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+.stat-v{font-family:var(--serif);font-size:28px;color:var(--text);margin:3px 0 1px;line-height:1}
+.stat-d{font-size:11px;color:var(--muted);font-family:var(--mono)}
+.stat.hi .stat-v{color:var(--teal)}.stat.warn .stat-v{color:var(--amber)}.stat.danger .stat-v{color:var(--red)}
+.card{background:var(--s2);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;margin-bottom:14px}
+.card-head{display:flex;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border2);gap:10px}
+.card-title{font-size:13px;font-weight:600;color:var(--text)}
+table{width:100%;border-collapse:collapse}
+th{font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);font-weight:500;padding:9px 12px;text-align:left;border-bottom:1px solid var(--border2)}
+td{padding:10px 12px;border-bottom:1px solid var(--border2);vertical-align:middle;font-size:13px}
+tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:rgba(255,255,255,0.015)}
+.tr-danger td{background:rgba(240,66,85,0.05)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:none;font-family:var(--sans);white-space:nowrap;text-decoration:none;-webkit-tap-highlight-color:transparent}
+.btn-p{background:var(--teal);color:#000;font-weight:600}
+.btn-s{background:var(--s3);color:var(--text);border:1px solid var(--border)}
+.btn-g{background:transparent;color:var(--muted);border:1px solid var(--border)}
+.btn-d{background:rgba(240,66,85,0.12);color:var(--red);border:1px solid rgba(240,66,85,0.2)}
+.btn-pay{background:rgba(0,196,160,0.1);color:var(--teal);border:1px solid rgba(0,196,160,0.25)}
+.btn-sm{padding:6px 11px;font-size:12px}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:500}
+.dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;display:inline-block}
+.tag{display:inline-flex;padding:2px 7px;border-radius:4px;font-size:10.5px;font-family:var(--mono)}
+.tag-needed{background:rgba(59,158,255,0.15);color:var(--blue)}
+.tag-auto{background:rgba(92,100,120,0.2);color:var(--subtle)}
+.tag-done{background:rgba(0,196,160,0.1);color:var(--teal)}
+.tag-over{background:rgba(240,66,85,0.12);color:var(--red)}
+.banner{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:var(--r);margin-bottom:12px;font-size:13px;line-height:1.5}
+.banner-a{background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.2);color:var(--amber)}
+.banner-r{background:rgba(240,66,85,0.07);border:1px solid rgba(240,66,85,0.18);color:var(--red)}
+.banner-t{background:var(--tealfade);border:1px solid rgba(0,196,160,0.2);color:var(--teal)}
+.tabs{display:flex;gap:3px;background:var(--s2);border:1px solid var(--border);border-radius:9px;padding:3px;margin-bottom:14px;flex-wrap:wrap}
+.tab{padding:7px 12px;border-radius:6px;font-size:13px;cursor:pointer;color:var(--muted);user-select:none;-webkit-tap-highlight-color:transparent}
+.tab.on{background:var(--s3);color:var(--text);font-weight:500}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:flex-start;justify-content:center;z-index:500;padding:16px;padding-top:60px;overflow-y:auto}
+.overlay.open{display:flex}
+.modal{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:22px;width:100%;max-width:560px;max-height:85vh;overflow-y:auto}
+.modal-lg{max-width:700px}
+.modal-title{font-family:var(--serif);font-size:20px;font-style:italic;margin-bottom:18px;color:var(--text)}
+.fg{display:flex;flex-direction:column;gap:12px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fl{display:flex;flex-direction:column;gap:5px}
+label{font-size:12px;letter-spacing:.3px;color:var(--muted);display:block}
+input,select,textarea{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-size:14px;font-family:var(--sans);outline:none;width:100%}
+input:focus,select:focus,textarea:focus{border-color:var(--teal)}
+select option{background:var(--s2)}
+.cbrow{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;color:var(--text);padding:4px 0}
+.cbrow input[type=checkbox]{width:20px;height:20px;accent-color:var(--teal);cursor:pointer;flex-shrink:0}
+.fa{display:flex;gap:9px;justify-content:flex-end;margin-top:6px;flex-wrap:wrap}
+.divider{border:none;border-top:1px solid var(--border2);margin:6px 0}
+.hint{font-size:12px;color:var(--muted);margin-top:3px}
+.calc-box{background:var(--s3);border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-size:13px;color:var(--subtle)}
+.err-msg{color:var(--red);font-size:13px;padding:8px 12px;background:rgba(240,66,85,0.08);border-radius:6px}
+.empty{text-align:center;padding:44px 24px;color:var(--muted)}
+.empty-i{font-size:28px;margin-bottom:10px}
+.empty-t{font-size:14px;margin-bottom:4px;color:var(--subtle)}
+.flex{display:flex}.aic{align-items:center}.gap-2{gap:8px}.gap-3{gap:12px}.mla{margin-left:auto}.mt-8{margin-top:8px}.mt-16{margin-top:16px}
+.fw6{font-weight:600}.mono{font-family:var(--mono)}.small{font-size:12px}.smaller{font-size:11px}.c-muted{color:var(--muted)}.c-teal{color:var(--teal)}.c-red{color:var(--red)}.c-amber{color:var(--amber)}
+/* Invoice print styles */
+.inv-wrap{background:#fff;color:#111;padding:32px 36px;font-family:'Geist',sans-serif;font-size:12.5px;line-height:1.5}
+.inv-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.inv-brand{font-family:'Instrument Serif',serif;font-size:22px;color:#00875f;font-style:italic}
+.inv-brand-sub{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:#9ca3af;margin-top:1px}
+.inv-num-block{text-align:right}
+.inv-num-n{font-size:17px;font-weight:700;color:#111}
+.inv-meta{font-size:11px;color:#6b7280;margin-top:3px}
+.inv-addrs{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;padding:14px;background:#f9fafb;border-radius:8px}
+.inv-al{font-size:9.5px;letter-spacing:1px;text-transform:uppercase;color:#9ca3af;margin-bottom:5px}
+.inv-an{font-weight:700;font-size:13px;color:#111}
+.inv-ad{font-size:11.5px;color:#4b5563;margin-top:2px;line-height:1.6}
+.inv-gphc{display:inline-block;margin-top:4px;font-size:10px;background:#e0faf4;color:#065f46;padding:1px 7px;border-radius:4px;font-weight:600}
+table.inv-t{width:100%;border-collapse:collapse;margin-bottom:18px}
+table.inv-t th{background:#f3f4f6;padding:7px 10px;text-align:left;font-size:10px;letter-spacing:.5px;text-transform:uppercase;color:#6b7280}
+table.inv-t td{padding:8px 10px;border-bottom:1px solid #f3f4f6;color:#374151;font-size:12px}
+.inv-totals{display:flex;justify-content:flex-end;margin-bottom:14px}
+.inv-totals table{width:220px}
+.inv-totals td{padding:5px 8px;font-size:13px;color:#374151;border:none}
+.inv-grand td{font-weight:700;font-size:15px;color:#00875f;border-top:2px solid #e5e7eb !important;padding-top:8px}
+.inv-terms{border-top:1px solid #e5e7eb;padding-top:12px;font-size:10.5px;color:#9ca3af;margin-top:4px;line-height:1.7}
+.inv-notebox{background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:10px 12px;font-size:11px;color:#92400e;margin-bottom:14px}
+.inv-exp-row{background:#fffbeb}
+@media print{
+  #app-mobile,#app-desktop .rail,#app-desktop .main .btn,.overlay{display:none!important}
+  .main{margin-left:0!important}
+  body{background:white}
+  #print-area{display:block!important;position:static!important;padding:0!important}
+}
+#print-area{display:none;position:fixed;inset:0;background:white;z-index:9999;padding:32px;overflow:auto}
+.import-step{display:none}.import-step.active{display:block}
+.parsing-spinner{text-align:center;padding:32px;color:var(--muted);font-size:13px}
+.parsed-field{background:var(--s3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.parsed-label{font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);width:90px;flex-shrink:0}
+.parsed-val{font-size:13px;color:var(--text);flex:1}
+.confidence-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.conf-high{background:var(--teal)}.conf-med{background:var(--amber)}.conf-low{background:var(--red)}
+.sheets-status{font-size:12px;font-family:var(--mono);padding:8px 12px;border-radius:6px;margin-top:8px}
+.sheets-ok{background:rgba(0,196,160,0.1);color:var(--teal);border:1px solid rgba(0,196,160,0.2)}
+.sheets-err{background:rgba(240,66,85,0.08);color:var(--red);border:1px solid rgba(240,66,85,0.2)}
+.sheets-pending{background:rgba(92,100,120,0.15);color:var(--subtle);border:1px solid var(--border)}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<!-- ═══ DESKTOP LAYOUT ═══ -->
+<div id="app-desktop">
+  <nav class="rail" id="rail-desktop">
+    <div class="rail-logo">
+      <div class="rail-wordmark">Pharmiverse</div>
+      <div class="rail-sub">Locum Hub</div>
+    </div>
+    <div class="nav-link on" id="dnl-dash" onclick="goTo('dash')"><span>&#9670;</span> Dashboard</div>
+    <div class="nav-link" id="dnl-shifts" onclick="goTo('shifts')"><span>&#9201;</span> Shifts<span class="nav-badge amber" id="badge-shifts" style="display:none"></span></div>
+    <div class="nav-link" id="dnl-invoices" onclick="goTo('invoices')"><span>&#9671;</span> Invoices</div>
+    <div class="nav-link" id="dnl-payments" onclick="goTo('payments')"><span>&#10763;</span> Payments<span class="nav-badge" id="badge-payments" style="display:none"></span></div>
+    <div class="nav-link" id="dnl-pharmacies" onclick="goTo('pharmacies')"><span>&#8853;</span> Pharmacies</div>
+    <div class="nav-link" id="dnl-profile" onclick="goTo('profile')"><span>&#9677;</span> My Profile</div>
+    <div class="nav-link" id="dnl-settings" onclick="goTo('settings')"><span>&#9881;</span> Settings</div>
+    <div class="rail-foot">Pharmiverse<br>Solutions Ltd</div>
+  </nav>
+  <main class="main" id="main-desktop">
+    <div class="page active" id="dt-page-dash"></div>
+    <div class="page" id="dt-page-shifts"></div>
+    <div class="page" id="dt-page-invoices"></div>
+    <div class="page" id="dt-page-payments"></div>
+    <div class="page" id="dt-page-pharmacies"></div>
+    <div class="page" id="dt-page-profile"></div>
+    <div class="page" id="dt-page-settings"></div>
+  </main>
+</div>
+
+<!-- ═══ MOBILE LAYOUT ═══ -->
+<div id="app-mobile">
+  <div id="mob-topbar">
+    <div id="mob-topbar-title">Pharmiverse</div>
+    <button id="mob-menu-btn" onclick="mobMenuToggle()">&#8943;</button>
+  </div>
+  <div id="mob-main">
+    <div class="page active" id="mb-page-dash"></div>
+    <div class="page" id="mb-page-shifts"></div>
+    <div class="page" id="mb-page-invoices"></div>
+    <div class="page" id="mb-page-payments"></div>
+    <div class="page" id="mb-page-pharmacies"></div>
+    <div class="page" id="mb-page-profile"></div>
+    <div class="page" id="mb-page-settings"></div>
+  </div>
+  <div id="mob-bottomnav">
+    <button class="mob-nav-btn on" id="mbn-dash" onclick="goTo('dash')"><span class="icon">&#9670;</span><span>Home</span></button>
+    <button class="mob-nav-btn" id="mbn-shifts" onclick="goTo('shifts')"><span class="icon">&#9201;</span><span>Shifts</span><span class="mob-nav-dot" id="mob-dot-shifts" style="display:none"></span></button>
+    <button class="mob-nav-btn" id="mbn-invoices" onclick="goTo('invoices')"><span class="icon">&#9671;</span><span>Invoices</span></button>
+    <button class="mob-nav-btn" id="mbn-payments" onclick="goTo('payments')"><span class="icon">&#10763;</span><span>Payments</span><span class="mob-nav-dot" id="mob-dot-payments" style="display:none"></span></button>
+    <button class="mob-nav-btn" id="mbn-more" onclick="mobMenuToggle()"><span class="icon">&#8943;</span><span>More</span></button>
+  </div>
+  <!-- drawer for extra pages -->
+  <div id="mob-drawer" onclick="mobDrawerClose(event)">
+    <div id="mob-drawer-inner">
+      <div class="nav-link" onclick="mobGoTo('pharmacies')">&#8853; Pharmacies</div>
+      <div class="nav-link" onclick="mobGoTo('profile')">&#9677; My Profile</div>
+      <div class="nav-link" onclick="mobGoTo('settings')">&#9881; Settings</div>
+    </div>
+  </div>
+</div>
+
+<!-- Modals (shared) -->
+<div class="overlay" id="shift-modal"><div class="modal"><div class="modal-title" id="shift-modal-title">Log New Shift</div><div class="fg" id="shift-form"></div></div></div>
+<div class="overlay" id="pharmacy-modal"><div class="modal"><div class="modal-title" id="pharmacy-modal-title">Add Pharmacy</div><div class="fg" id="pharmacy-form"></div></div></div>
+<div class="overlay" id="invoice-modal"><div class="modal modal-lg" id="invoice-modal-inner"><div class="flex aic gap-2" style="margin-bottom:14px" id="invoice-modal-head"></div><div id="invoice-preview-wrap"></div><div id="invoice-modal-tip" style="margin-top:10px;font-size:11px;color:var(--muted);text-align:center"></div></div></div>
+<div class="overlay" id="create-invoice-modal"><div class="modal"><div class="modal-title">Generate Invoice</div><div class="fg" id="create-invoice-form"></div></div></div>
+<div class="overlay" id="import-modal">
+  <div class="modal">
+    <div class="modal-title">⚡ Import Booking from Email</div>
+    <div id="import-step-paste" class="import-step active">
+      <div class="fg">
+        <div class="banner banner-t" style="margin-bottom:0">Paste your booking confirmation email below. Claude will extract shift details automatically.</div>
+        <div class="fl"><label>Email / message content</label><textarea id="import-email-text" rows="8" placeholder="Paste the full booking confirmation here..."></textarea></div>
+        <div id="import-err" class="err-msg" style="display:none"></div>
+        <div class="fa"><button class="btn btn-g" onclick="closeModal('import-modal')">Cancel</button><button class="btn btn-p" onclick="parseEmail()">⚡ Extract Details</button></div>
+      </div>
+    </div>
+    <div id="import-step-parsing" class="import-step">
+      <div class="parsing-spinner"><div style="font-size:32px;margin-bottom:12px;animation:spin 1s linear infinite;display:inline-block">⚙</div><div>Reading booking confirmation…</div></div>
+    </div>
+    <div id="import-step-confirm" class="import-step">
+      <div class="fg">
+        <div class="banner banner-t" style="margin-bottom:4px" id="import-source-banner"></div>
+        <div id="import-parsed-fields"></div>
+        <div class="banner banner-a" id="import-warnings" style="display:none"></div>
+        <hr class="divider">
+        <div style="font-size:12px;color:var(--muted)">Review the details above, then confirm to open the shift form.</div>
+        <div class="fa"><button class="btn btn-g" onclick="importBack()">← Back</button><button class="btn btn-p" onclick="importConfirm()">Confirm → Open Shift Form</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="print-area"></div>
+
+<script>
+// ── Storage (localStorage) ───────────────────────────────────────────────────
+const DB = {
+  get(k) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : null; } catch { return null; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+};
+
+// ── State ────────────────────────────────────────────────────────────────────
+const SOURCES = ["LAL", "Locum Prime", "WhatsApp", "Direct"];
+const SOURCE_COLOR = { LAL: "#3b9eff", "Locum Prime": "#f97316", WhatsApp: "#22c55e", Direct: "#a855f7" };
+const SOURCE_INVOICE_DEFAULT = { LAL: false, "Locum Prime": true, WhatsApp: true, Direct: true };
+const MILEAGE_RATE = 0.45;
+
+const DEFAULT_PROFILE = {
+  name: "Your Full Name", address: "Your Address, Town, Postcode", gphc: "GPhC XXXXXXX",
+  company: "Pharmiverse Solutions Ltd", companyAddress: "Registered Address, Town, Postcode",
+  companyNo: "Company No: XXXXXXXX", sortCode: "XX-XX-XX", accountNo: "XXXXXXXX",
+  email: "your@email.com", phone: "07XXX XXXXXX"
+};
+
+let state = {
+  page: "dash",
+  shiftFilter: "all",
+  invoiceFilter: "pending",
+  editingShift: null,
+  editingPharmacy: null,
+  previewInvoice: null,
+  createInvoiceGroup: null,
+  profile: DB.get("pv_profile") || { ...DEFAULT_PROFILE },
+  shifts: DB.get("pv_shifts") || [],
+  invoices: DB.get("pv_invoices") || [],
+  pharmacies: DB.get("pv_pharmacies") || [],
+  invSeq: DB.get("pv_invseq") || 1,
+  settings: DB.get("pv_settings") || { anthropicKey: "", sheetsUrl: "", sheetsEnabled: false, calendarEnabled: false },
+};
+
+function save() {
+  DB.set("pv_profile", state.profile);
+  DB.set("pv_shifts", state.shifts);
+  DB.set("pv_invoices", state.invoices);
+  DB.set("pv_pharmacies", state.pharmacies);
+  DB.set("pv_invseq", state.invSeq);
+  if (state.settings && state.settings.sheetsEnabled && state.settings.sheetsUrl) pushToSheets();
+}
+
+// ── Formatters ───────────────────────────────────────────────────────────────
+const fmtGBP = n => "\u00A3" + (+n || 0).toFixed(2);
+const fmtDate = d => d ? new Date(d + "T12:00:00").toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "\u2014";
+const fmtDateShort = d => d ? new Date(d + "T12:00:00").toLocaleDateString("en-GB", { day: "2-digit", month: "short" }) : "\u2014";
+const todayStr = () => new Date().toISOString().split("T")[0];
+const addDays = (d, n) => { const dt = new Date(d + "T12:00:00"); dt.setDate(dt.getDate() + n); return dt.toISOString().split("T")[0]; };
+const endOfFollowingMonth = issued => { const d = new Date(issued + "T12:00:00"); return new Date(d.getFullYear(), d.getMonth() + 2, 0).toISOString().split("T")[0]; };
+const invoiceNo = n => "PVS-" + String(n).padStart(4, "0");
+const paidHours = s => { const onSite = s.hours || 0; const breakH = (s.breakMins || 0) / 60; return s.breakPaid ? onSite : Math.max(0, onSite - breakH); };
+const shiftTotal = s => (paidHours(s) * s.rate) + (s.expensesClaimed ? (s.expensesAmount || 0) : 0);
+const daysBetween = (a, b) => Math.ceil((new Date(b) - new Date(a)) / 86400000);
+const esc = s => String(s || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+
+// ── Computed helpers ─────────────────────────────────────────────────────────
+const uninvoiced = () => state.shifts.filter(s => s.needsInvoice && !s.invoiceId);
+const backlog = () => state.shifts.filter(s => { const m = new Date(s.date + "T12:00:00").getMonth(); return (m === 0 || m === 1) && s.needsInvoice && !s.invoiceId; });
+const overdueInv = () => state.invoices.filter(i => !i.paid && new Date(i.dueDate) < new Date());
+const outstandingTotal = () => state.invoices.filter(i => !i.paid).reduce((a, i) => a + i.total, 0);
+const paidTotal = () => state.invoices.filter(i => i.paid).reduce((a, i) => a + i.total, 0);
+
+function groupUninvoiced() {
+  const groups = {};
+  uninvoiced().forEach(s => {
+    const key = s.pharmacyId || s.pharmacy;
+    if (!groups[key]) groups[key] = { key, pharmacy: s.pharmacy, contractor: s.contractor, pharmacyId: s.pharmacyId, pharmacyAddress: s.pharmacyAddress || "", pharmacyEmail: s.pharmacyEmail || "", shifts: [] };
+    groups[key].shifts.push(s);
+  });
+  return Object.values(groups);
+}
+
+// ── Layout mode detection ────────────────────────────────────────────────────
+function isMobile() { return window.innerWidth < 900; }
+
+// Get element from active layout container
+function gel(id) {
+  var prefix = isMobile() ? "mb" : "dt";
+  var container = document.getElementById(prefix + "-page-" + state.page);
+  if (container) {
+    var el = container.querySelector("#" + id);
+    if (el) return el;
+  }
+  // fallback to document-wide search
+  return document.getElementById(id);
+}
+
+function initLayout() {
+  if (isMobile()) {
+    document.getElementById("app-desktop").style.display = "none";
+    document.getElementById("app-mobile").style.display = "block";
+  } else {
+    document.getElementById("app-desktop").style.display = "flex";
+    document.getElementById("app-mobile").style.display = "none";
+  }
+}
+
+// ── Page content containers ───────────────────────────────────────────────────
+function getPageEl(page) {
+  var mob = document.getElementById("mb-page-" + page);
+  var desk = document.getElementById("dt-page-" + page);
+  return isMobile() ? mob : desk;
+}
+
+// Page templates (static HTML shells injected once)
+var PAGE_SHELLS = {
+  dash: function(el) {
+    el.innerHTML = '<div class="ph"><div class="ph-left"><div class="ph-title" id="dash-greeting">Good morning</div><div class="ph-sub" id="dash-date"></div></div></div><div id="dash-banners"></div><div class="stat-row" id="dash-stats"></div><div class="card" id="dash-recent"></div><div id="dash-overdue"></div>';
+  },
+  shifts: function(el) {
+    el.innerHTML = '<div class="ph"><div class="ph-left"><div class="ph-title">Shifts</div><div class="ph-sub" id="shifts-sub"></div></div><div class="flex gap-2"><button class="btn btn-s btn-sm" onclick="openImportModal()">⚡ Import Email</button><button class="btn btn-p btn-sm" onclick="openShiftModal()">+ Log Shift</button></div></div><div class="tabs" id="shift-tabs"><div class="tab on" data-filter="all">All</div><div class="tab" data-filter="uninvoiced" id="tab-uninvoiced">Uninvoiced</div><div class="tab" data-filter="backlog" id="tab-backlog">Backlog</div></div><div class="card" id="shifts-table"></div>';
+    document.getElementById("shift-tabs").addEventListener("click", function(e) { var t = e.target.closest(".tab"); if (t) { state.shiftFilter = t.dataset.filter; renderShifts(); } });
+  },
+  invoices: function(el) {
+    el.innerHTML = '<div class="ph"><div class="ph-left"><div class="ph-title">Invoices</div><div class="ph-sub" id="invoices-sub"></div></div></div><div id="invoice-groups"></div><div class="tabs" id="invoice-tabs"><div class="tab on" data-filter="pending">Unpaid</div><div class="tab" data-filter="paid">Paid</div><div class="tab" data-filter="all">All</div></div><div class="card" id="invoices-table"></div>';
+    document.getElementById("invoice-tabs").addEventListener("click", function(e) { var t = e.target.closest(".tab"); if (t) { state.invoiceFilter = t.dataset.filter; renderInvoices(); } });
+  },
+  payments: function(el) {
+    el.innerHTML = '<div class="ph"><div class="ph-left"><div class="ph-title">Payment Tracker</div><div class="ph-sub">14-day terms &middot; Most contractors pay EOM</div></div></div><div class="card" id="payments-table"></div>';
+  },
+  pharmacies: function(el) {
+    el.innerHTML = '<div class="ph"><div class="ph-left"><div class="ph-title">Pharmacies</div><div class="ph-sub" id="pharmacies-sub"></div></div><button class="btn btn-p btn-sm" onclick="openPharmacyModal()">+ Add</button></div><div class="card" id="pharmacies-table"></div>';
+  },
+  profile: function(el) {
+    el.innerHTML = '<div class="ph"><div class="ph-left"><div class="ph-title">My Profile</div><div class="ph-sub">Details appear on every invoice</div></div></div><div class="card" style="padding:20px" id="profile-form-wrap"></div>';
+  },
+  settings: function(el) {
+    el.innerHTML = '<div class="ph"><div class="ph-left"><div class="ph-title">Settings</div><div class="ph-sub">API keys and integrations</div></div></div><div class="card" style="padding:20px;margin-bottom:14px" id="settings-anthropic-wrap"></div><div class="card" style="padding:20px;margin-bottom:14px" id="settings-sheets-wrap"></div><div class="card" style="padding:20px" id="settings-calendar-wrap"></div>';
+  }
+};
+
+var shellsInitialized = {};
+
+function ensureShell(page) {
+  // Only init the currently active layout's container
+  var prefix = isMobile() ? 'mb' : 'dt';
+  var key = prefix + page;
+  if (!shellsInitialized[key]) {
+    var el = document.getElementById(prefix + "-page-" + page);
+    if (el) {
+      PAGE_SHELLS[page](el);
+      shellsInitialized[key] = true;
+    }
+  }
+}
+
+// ── Navigation ────────────────────────────────────────────────────────────────
+var PAGES = ["dash","shifts","invoices","payments","pharmacies","profile","settings"];
+
+function goTo(page) {
+  state.page = page;
+  initLayout();
+
+  // Update desktop nav highlights
+  PAGES.forEach(function(p) {
+    var el = document.getElementById("dnl-" + p);
+    if (el) el.className = "nav-link" + (p === page ? " on" : "");
+  });
+
+  // Update desktop page visibility
+  PAGES.forEach(function(p) {
+    var el = document.getElementById("dt-page-" + p);
+    if (el) el.className = "page" + (p === page ? " active" : "");
+  });
+
+  // Update mobile bottom nav highlights
+  ["dash","shifts","invoices","payments"].forEach(function(p) {
+    var el = document.getElementById("mbn-" + p);
+    if (el) el.className = "mob-nav-btn" + (p === page ? " on" : "");
+  });
+
+  // Update mobile page visibility
+  PAGES.forEach(function(p) {
+    var el = document.getElementById("mb-page-" + p);
+    if (el) el.className = "page" + (p === page ? " active" : "");
+  });
+
+  render();
+}
+
+// Nav handled via inline onclick attributes
+
+// Mobile drawer nav
+function mobGoTo(page) {
+  document.getElementById("mob-drawer").style.display = "none";
+  goTo(page);
+}
+
+function mobMenuToggle() {
+  var d = document.getElementById("mob-drawer");
+  d.style.display = (d.style.display === "block") ? "none" : "block";
+}
+
+function mobDrawerClose(e) {
+  if (e.target === document.getElementById("mob-drawer")) {
+    document.getElementById("mob-drawer").style.display = "none";
+  }
+}
+
+// ── Render dispatcher ────────────────────────────────────────────────────────
+function render() {
+  updateBadges();
+  ensureShell(state.page);
+  var p = state.page;
+  if (p === "dash") renderDash();
+  else if (p === "shifts") renderShifts();
+  else if (p === "invoices") renderInvoices();
+  else if (p === "payments") renderPayments();
+  else if (p === "pharmacies") renderPharmacies();
+  else if (p === "profile") renderProfile();
+  else if (p === "settings") renderSettings();
+}
+
+function updateBadges() {
+  var u = uninvoiced().length;
+  var o = overdueInv().length;
+  var bs = document.getElementById("badge-shifts");
+  var bp = document.getElementById("badge-payments");
+  if(bs){bs.textContent = u; bs.style.display = u > 0 ? "" : "none";}
+  if(bp){bp.textContent = o; bp.style.display = o > 0 ? "" : "none";}
+  var md = document.getElementById("mob-dot-shifts");
+  var mp = document.getElementById("mob-dot-payments");
+  if(md) md.style.display = u > 0 ? "block" : "none";
+  if(mp) mp.style.display = o > 0 ? "block" : "none";
+}
+
+// ── Dashboard ─────────────────────────────────────────────────────────────────
+function renderDash() {
+  const now = new Date();
+  gel("dash-greeting").textContent = now.getHours() < 12 ? "Good morning" : "Good afternoon";
+  gel("dash-date").textContent = now.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+
+  // Banners
+  let banners = "";
+  const bl = backlog().length;
+  const od = overdueInv();
+  if (bl > 0) banners += `<div class="banner banner-a">&#9888; <div><strong>${bl} uninvoiced shift${bl > 1 ? "s" : ""}</strong> from Jan/Feb still need invoicing. <span style="cursor:pointer;text-decoration:underline" onclick="goTo('invoices')">Generate invoices &rarr;</span></div></div>`;
+  if (od.length > 0) banners += `<div class="banner banner-r">&#9888; <div><strong>${od.length} overdue invoice${od.length > 1 ? "s" : ""}</strong> &mdash; ${fmtGBP(od.reduce((a,i)=>a+i.total,0))} past due. <span style="cursor:pointer;text-decoration:underline" onclick="goTo('payments')">Chase payments &rarr;</span></div></div>`;
+  gel("dash-banners").innerHTML = banners;
+
+  // Stats
+  const monthShifts = state.shifts.filter(s => { const d = new Date(s.date + "T12:00:00"); return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear(); });
+  const monthTotal = monthShifts.reduce((a,s) => a + shiftTotal(s), 0);
+  const ot = outstandingTotal(), u = uninvoiced().length;
+  const ytdMiles = state.shifts.filter(s => new Date(s.date + "T12:00:00").getFullYear() === now.getFullYear()).reduce((a,s) => a + (s.mileage || 0), 0);
+  const monthMiles = monthShifts.reduce((a,s) => a + (s.mileage || 0), 0);
+  gel("dash-stats").innerHTML = `
+    <div class="stat ${ot > 0 ? 'warn' : ''}"><div class="stat-l">Outstanding</div><div class="stat-v">${fmtGBP(ot)}</div><div class="stat-d">${state.invoices.filter(i=>!i.paid).length} unpaid</div></div>
+    <div class="stat hi"><div class="stat-l">Paid to date</div><div class="stat-v">${fmtGBP(paidTotal())}</div><div class="stat-d">${state.invoices.filter(i=>i.paid).length} settled</div></div>
+    <div class="stat"><div class="stat-l">This month</div><div class="stat-v">${fmtGBP(monthTotal)}</div><div class="stat-d">${monthShifts.length} shifts</div></div>
+    <div class="stat ${u > 0 ? 'warn' : ''}"><div class="stat-l">Needs invoice</div><div class="stat-v">${u}</div><div class="stat-d">shifts</div></div>
+    <div class="stat"><div class="stat-l">Mileage YTD</div><div class="stat-v">${ytdMiles}</div><div class="stat-d">${monthMiles} mi this month &middot; ${fmtGBP(ytdMiles * 0.45)} HMRC</div></div>`;
+
+  // Recent shifts
+  const recent = [...state.shifts].sort((a,b) => b.date.localeCompare(a.date)).slice(0, 8);
+  let recentHtml = `<div class="card-head"><div class="card-title">Recent Shifts</div><button class="btn btn-g btn-sm mla" onclick="goTo('shifts')">All &rarr;</button></div>`;
+  if (recent.length === 0) {
+    recentHtml += `<div class="empty"><div class="empty-i">&#9201;</div><div class="empty-t">No shifts yet &mdash; log your first shift</div></div>`;
+  } else {
+    recentHtml += `<table><thead><tr><th>Date</th><th>Pharmacy</th><th>Source</th><th>Hours</th><th>Total</th><th>Invoice</th></tr></thead><tbody>`;
+    recent.forEach(s => { recentHtml += shiftRowHtml(s, false); });
+    recentHtml += `</tbody></table>`;
+  }
+  gel("dash-recent").innerHTML = recentHtml;
+
+  // Overdue
+  let odHtml = "";
+  if (od.length > 0) {
+    odHtml = `<div class="card"><div class="card-head"><div class="card-title c-red">Overdue Invoices</div><button class="btn btn-g btn-sm mla" onclick="goTo('payments')">Manage &rarr;</button></div><table><thead><tr><th>Invoice</th><th>Pharmacy</th><th>Amount</th><th>Overdue</th></tr></thead><tbody>`;
+    od.forEach(i => { const d = daysBetween(i.dueDate, todayStr()); odHtml += `<tr class="tr-danger"><td class="mono smaller">${esc(i.number)}</td><td class="fw6">${esc(i.pharmacyName)}</td><td class="mono c-red fw6">${fmtGBP(i.total)}</td><td class="c-red smaller">${d}d</td></tr>`; });
+    odHtml += `</tbody></table></div>`;
+  }
+  gel("dash-overdue").innerHTML = odHtml;
+}
+
+// ── Shifts ───────────────────────────────────────────────────────────────────
+function renderShifts() {
+  const u = uninvoiced().length, bl = backlog().length;
+  gel("shifts-sub").textContent = `${state.shifts.length} total \u00B7 ${u} need invoicing`;
+  document.getElementById("tab-uninvoiced").textContent = `Needs Invoice (${u})`;
+  document.getElementById("tab-backlog").textContent = `Jan/Feb (${bl})`;
+
+  const f = state.shiftFilter;
+  let filtered = [...state.shifts].filter(s => {
+    if (f === "uninvoiced") return s.needsInvoice && !s.invoiceId;
+    if (f === "backlog") { const m = new Date(s.date + "T12:00:00").getMonth(); return (m === 0 || m === 1) && s.needsInvoice && !s.invoiceId; }
+    return true;
+  }).sort((a,b) => b.date.localeCompare(a.date));
+
+  let html = "";
+  if (filtered.length === 0) {
+    html = `<div class="empty"><div class="empty-i">&#9201;</div><div class="empty-t">No shifts found</div></div>`;
+  } else {
+    html = `<table><thead><tr><th>Date</th><th>Pharmacy</th><th>Source</th><th>Hrs</th><th>Rate</th><th>Mileage</th><th>Expenses</th><th>Total</th><th>Invoice</th><th></th></tr></thead><tbody>`;
+    filtered.forEach(s => { html += shiftRowHtml(s, true); });
+    html += `</tbody></table>`;
+  }
+  gel("shifts-table").innerHTML = html;
+
+  // Tab state
+  document.querySelectorAll("#shift-tabs .tab").forEach(t => {
+    t.classList.toggle("on", t.dataset.filter === f);
+  });
+}
+
+// shift-tabs click handled in PAGE_SHELLS
+
+function shiftRowHtml(s, full) {
+  const sc = SOURCE_COLOR[s.source] || "#888";
+  const ph = paidHours(s);
+  const breakStr = s.breakMins > 0 ? (s.breakPaid ? `${s.breakMins}m paid` : `${s.breakMins}m unpaid`) : "";
+  const hoursDisplay = full && s.breakMins > 0
+    ? `${s.hours}h <span class="smaller c-muted">(${ph}h paid)</span>`
+    : `${ph}h`;
+  const inv = s.needsInvoice
+    ? (s.invoiceId ? `<span class="tag tag-done">${esc(s.invoiceId)}</span>` : `<span class="tag tag-needed">Needed</span>`)
+    : `<span class="tag tag-auto">Auto-pay</span>`;
+  const sentBadge = s.invoiceId && s.invoiceSent ? `<span class="tag" style="background:rgba(0,196,160,0.08);color:var(--teal);margin-left:3px">Sent</span>` : "";
+  const calBadge = s.calEventId ? `<span title="Calendar event created" style="margin-left:4px;font-size:11px;color:var(--muted)">&#128197;</span>` : "";
+  const editBtn = full ? `<td><button class="btn btn-g btn-sm" onclick="openShiftModal('${esc(s.id)}')">Edit</button></td>` : "";
+  const rateCell = full ? `<td class="mono smaller">${fmtGBP(s.rate)}/h</td>` : "";
+  const mileCell = full ? `<td class="mono smaller c-muted">${s.mileage > 0 ? s.mileage + " mi" : "\u2014"}</td>` : "";
+  const expCell = full ? `<td class="mono smaller">${s.expensesClaimed && s.expensesAmount > 0 ? fmtGBP(s.expensesAmount) : '<span class="c-muted">\u2014</span>'}</td>` : "";
+  return `<tr>
+    <td class="mono smaller">${fmtDate(s.date)}</td>
+    <td><div class="fw6" style="font-size:13px">${esc(s.pharmacy)}</div>${s.contractor ? `<div class="smaller c-muted">${esc(s.contractor)}</div>` : ""}</td>
+    <td><span class="badge" style="background:${sc}18;color:${sc}"><span class="dot" style="background:${sc}"></span>${esc(s.source)}</span></td>
+    <td class="mono smaller">${hoursDisplay}${breakStr ? `<div class="smaller c-muted">${breakStr}</div>` : ""}</td>
+    ${rateCell}${mileCell}${expCell}
+    <td class="mono smaller fw6">${fmtGBP(shiftTotal(s))}</td>
+    <td>${inv}${sentBadge}${calBadge}</td>
+    ${editBtn}
+  </tr>`;
+}
+
+// ── Invoices ──────────────────────────────────────────────────────────────────
+function renderInvoices() {
+  const groups = groupUninvoiced();
+  const ot = state.invoices.filter(i => !i.paid).reduce((a,i) => a + i.total, 0);
+  gel("invoices-sub").textContent = `${state.invoices.length} total \u00B7 ${fmtGBP(ot)} outstanding`;
+
+  // Uninvoiced groups
+  let gHtml = "";
+  if (groups.length > 0) {
+    gHtml = `<div style="margin-bottom:24px"><div class="flex aic gap-2" style="margin-bottom:12px"><div style="font-size:12.5px;font-weight:600;color:var(--amber)">&#9889; ${groups.length} contractor${groups.length > 1 ? "s" : ""} with uninvoiced shifts</div><button class="btn btn-p btn-sm mla" onclick="generateAllInvoices()">Generate All (${groups.length})</button></div>`;
+    groups.forEach(g => {
+      const tot = g.shifts.reduce((a,s) => a + shiftTotal(s), 0);
+      const dates = g.shifts.map(s => fmtDateShort(s.date)).join(", ");
+      gHtml += `<div class="card" style="margin-bottom:8px"><div style="padding:13px 16px;display:flex;align-items:center;gap:14px">
+        <div><div class="fw6" style="font-size:13px">${esc(g.pharmacy)}</div><div class="smaller c-muted">${g.shifts.length} shift${g.shifts.length > 1 ? "s" : ""}: ${esc(dates)}</div></div>
+        <div class="mla flex aic gap-3"><div class="mono fw6 c-teal">${fmtGBP(tot)}</div><button class="btn btn-p btn-sm" onclick="openCreateInvoiceModal('${esc(g.key)}')">Generate Invoice</button></div>
+      </div></div>`;
+    });
+    gHtml += "</div>";
+  }
+  gel("invoice-groups").innerHTML = gHtml;
+
+  // Invoice list
+  const f = state.invoiceFilter;
+  const displayed = [...state.invoices].filter(i => f === "pending" ? !i.paid : f === "paid" ? i.paid : true).sort((a,b) => b.issued.localeCompare(a.issued));
+
+  let html = "";
+  if (displayed.length === 0) {
+    html = `<div class="empty"><div class="empty-i">&#9671;</div><div class="empty-t">No invoices here yet</div></div>`;
+  } else {
+    html = `<table><thead><tr><th>Number</th><th>Pharmacy</th><th>Issued</th><th>Due (14d)</th><th>Expected (EOM)</th><th>Amount</th><th>Sent</th><th>Status</th><th></th></tr></thead><tbody>`;
+    displayed.forEach(i => {
+      const over = !i.paid && new Date(i.dueDate) < new Date();
+      const days = over ? daysBetween(i.dueDate, todayStr()) : null;
+      const status = i.paid ? `<span class="tag tag-done">Paid</span>` : over ? `<span class="tag tag-over">${days}d overdue</span>` : `<span class="tag tag-needed">Pending</span>`;
+      const sentCell = i.sent
+        ? `<span class="tag tag-done" title="${fmtDate(i.sentDate)}">&#10003; Sent</span>`
+        : `<button class="btn btn-g btn-sm" onclick="markSent('${esc(i.id)}')">Mark sent</button>`;
+      html += `<tr class="${over ? "tr-danger" : ""}">
+        <td class="mono smaller">${esc(i.number)}</td>
+        <td><div class="fw6" style="font-size:13px">${esc(i.pharmacyName)}</div><div class="smaller c-muted">${esc(i.contractor || "")}</div></td>
+        <td class="mono smaller">${fmtDate(i.issued)}</td>
+        <td class="mono smaller">${fmtDate(i.dueDate)}</td>
+        <td class="mono smaller c-muted">${fmtDate(i.expectedPayDate)}</td>
+        <td class="mono fw6">${fmtGBP(i.total)}</td>
+        <td>${sentCell}</td>
+        <td>${status}</td>
+        <td><button class="btn btn-g btn-sm" onclick="openInvoicePreview('${esc(i.id)}')">View</button></td>
+      </tr>`;
+    });
+    html += "</tbody></table>";
+  }
+  gel("invoices-table").innerHTML = html;
+
+  document.querySelectorAll("#invoice-tabs .tab").forEach(t => {
+    t.classList.toggle("on", t.dataset.filter === f);
+  });
+}
+
+// invoice-tabs click handled in PAGE_SHELLS
+
+// ── Payments ──────────────────────────────────────────────────────────────────
+function renderPayments() {
+  const unpaid = [...state.invoices].filter(i => !i.paid).sort((a,b) => a.dueDate.localeCompare(b.dueDate));
+  let html = "";
+  if (unpaid.length === 0) {
+    html = `<div class="empty"><div class="empty-i">&#10003;</div><div class="empty-t" style="color:var(--teal)">All invoices paid!</div></div>`;
+  } else {
+    html = `<table><thead><tr><th>Invoice</th><th>Pharmacy</th><th>Amount</th><th>Issued</th><th>Your Terms</th><th>Expected (EOM)</th><th>Status</th><th></th></tr></thead><tbody>`;
+    unpaid.forEach(i => {
+      const over = new Date(i.dueDate) < new Date();
+      const days = over ? daysBetween(i.dueDate, todayStr()) : daysBetween(todayStr(), i.dueDate);
+      const status = over ? `<span class="c-red smaller fw6">${days}d overdue</span>` : `<span class="c-muted smaller">Due in ${days}d</span>`;
+      html += `<tr class="${over ? "tr-danger" : ""}">
+        <td class="mono smaller">${esc(i.number)}</td>
+        <td><div class="fw6">${esc(i.pharmacyName)}</div><div class="smaller c-muted">${esc(i.contractor || "")}</div></td>
+        <td class="mono fw6">${fmtGBP(i.total)}</td>
+        <td class="mono smaller">${fmtDate(i.issued)}</td>
+        <td class="mono smaller">${fmtDate(i.dueDate)}</td>
+        <td class="mono smaller c-muted">${fmtDate(i.expectedPayDate)}</td>
+        <td>${status}</td>
+        <td><button class="btn btn-pay btn-sm" onclick="markPaid('${esc(i.id)}')">&#10003; Mark Paid</button></td>
+      </tr>`;
+    });
+    html += "</tbody></table>";
+  }
+  gel("payments-table").innerHTML = html;
+}
+
+function markPaid(id) {
+  state.invoices = state.invoices.map(i => i.id === id ? { ...i, paid: true, paidDate: todayStr() } : i);
+  save(); render();
+}
+
+function markSent(id) {
+  state.invoices = state.invoices.map(i => i.id === id ? { ...i, sent: true, sentDate: todayStr() } : i);
+  save(); render();
+}
+
+// ── Pharmacies ────────────────────────────────────────────────────────────────
+function renderPharmacies() {
+  gel("pharmacies-sub").textContent = `${state.pharmacies.length} saved contractors`;
+  let html = "";
+  if (state.pharmacies.length === 0) {
+    html = `<div class="empty"><div class="empty-i">&#8853;</div><div class="empty-t">No pharmacies saved</div><div style="font-size:12px;color:var(--muted)">Save regulars to auto-fill rate, address and email when logging shifts</div></div>`;
+  } else {
+    html = `<table><thead><tr><th>Pharmacy</th><th>Contractor</th><th>Address</th><th>Email</th><th>Rate</th><th></th></tr></thead><tbody>`;
+    state.pharmacies.forEach(p => {
+      html += `<tr>
+        <td class="fw6">${esc(p.name)}</td>
+        <td>${esc(p.contractor)}</td>
+        <td class="smaller c-muted" style="max-width:180px">${esc(p.address)}</td>
+        <td class="mono smaller">${esc(p.email) || "\u2014"}</td>
+        <td class="mono">${fmtGBP(p.defaultRate)}/h</td>
+        <td><div class="flex gap-2"><button class="btn btn-g btn-sm" onclick="openPharmacyModal('${esc(p.id)}')">Edit</button><button class="btn btn-d btn-sm" onclick="deletePharmacy('${esc(p.id)}')">Del</button></div></td>
+      </tr>`;
+    });
+    html += "</tbody></table>";
+  }
+  gel("pharmacies-table").innerHTML = html;
+}
+
+function deletePharmacy(id) {
+  state.pharmacies = state.pharmacies.filter(p => p.id !== id);
+  save(); renderPharmacies();
+}
+
+// ── Profile ───────────────────────────────────────────────────────────────────
+function renderProfile() {
+  const p = state.profile;
+  gel("profile-form-wrap").innerHTML = `
+    <div class="fg">
+      <div style="font-weight:600;font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase">Locum Pharmacist</div>
+      <div class="frow">
+        <div class="fl"><label>Full Name</label><input id="p-name" value="${esc(p.name)}"></div>
+        <div class="fl"><label>GPhC Registration Number</label><input id="p-gphc" value="${esc(p.gphc)}" placeholder="GPhC XXXXXXX"></div>
+      </div>
+      <div class="fl"><label>Home / Correspondence Address</label><textarea id="p-address" rows="2">${esc(p.address)}</textarea></div>
+      <div class="frow">
+        <div class="fl"><label>Email</label><input id="p-email" type="email" value="${esc(p.email)}"></div>
+        <div class="fl"><label>Phone</label><input id="p-phone" value="${esc(p.phone)}"></div>
+      </div>
+      <hr class="divider">
+      <div style="font-weight:600;font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase">Company</div>
+      <div class="frow">
+        <div class="fl"><label>Company Name</label><input id="p-company" value="${esc(p.company)}"></div>
+        <div class="fl"><label>Company Number</label><input id="p-companyNo" value="${esc(p.companyNo)}"></div>
+      </div>
+      <div class="fl"><label>Registered Address</label><textarea id="p-companyAddress" rows="2">${esc(p.companyAddress)}</textarea></div>
+      <hr class="divider">
+      <div style="font-weight:600;font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase">Bank Details (shown on invoices)</div>
+      <div class="frow">
+        <div class="fl"><label>Sort Code</label><input id="p-sortCode" value="${esc(p.sortCode)}" placeholder="XX-XX-XX"></div>
+        <div class="fl"><label>Account Number</label><input id="p-accountNo" value="${esc(p.accountNo)}"></div>
+      </div>
+      <div id="p-saved-msg" style="display:none" class="banner banner-t">&#10003; Profile saved!</div>
+      <div class="fa"><button class="btn btn-p" onclick="saveProfile()">Save Profile</button></div>
+    </div>`;
+}
+
+function saveProfile() {
+  state.profile = {
+    name: document.getElementById("p-name").value,
+    gphc: document.getElementById("p-gphc").value,
+    address: document.getElementById("p-address").value,
+    email: document.getElementById("p-email").value,
+    phone: document.getElementById("p-phone").value,
+    company: document.getElementById("p-company").value,
+    companyNo: document.getElementById("p-companyNo").value,
+    companyAddress: document.getElementById("p-companyAddress").value,
+    sortCode: document.getElementById("p-sortCode").value,
+    accountNo: document.getElementById("p-accountNo").value,
+  };
+  save();
+  const msg = document.getElementById("p-saved-msg");
+  msg.style.display = ""; setTimeout(() => msg.style.display = "none", 2500);
+}
+
+// ── Shift Modal ───────────────────────────────────────────────────────────────
+function openShiftModal(id, prefill) {
+  state.editingShift = id ? state.shifts.find(s => s.id === id) : null;
+  const s = state.editingShift;
+  const pf = prefill || {};
+
+  document.getElementById("shift-modal-title").textContent = s ? "Edit Shift" : (prefill ? "Confirm Imported Booking" : "Log New Shift");
+
+  const pharmacyOptions = state.pharmacies.map(p => `<option value="${esc(p.id)}" ${s && s.pharmacyId === p.id ? "selected" : ""}>${esc(p.name)}</option>`).join("");
+  const srcVal = s ? s.source : (pf.source || "LAL");
+  const sourceOptions = SOURCES.map(src => `<option value="${esc(src)}" ${srcVal === src ? "selected" : ""}>${esc(src)}</option>`).join("");
+  const invoiceDefault = s ? s.needsInvoice : (pf.needsInvoice !== undefined ? pf.needsInvoice : SOURCE_INVOICE_DEFAULT[srcVal]);
+
+  document.getElementById("shift-form").innerHTML = `
+    ${prefill ? '<div class="banner banner-t" style="margin-bottom:0">&#10003; Details pre-filled from booking confirmation &mdash; review and adjust before saving.</div>' : ""}
+    <div class="frow">
+      <div class="fl"><label>Date</label><input type="date" id="sf-date" value="${s ? s.date : (pf.date || todayStr())}"></div>
+      <div class="fl"><label>Booking Source</label><select id="sf-source" onchange="onSourceChange()">${sourceOptions}</select></div>
+    </div>
+    <div class="fl"><label>Pharmacy (select saved contractor)</label>
+      <select id="sf-pharma-sel" onchange="onPharmacySelect()">
+        <option value="">-- Choose saved or fill in manually below --</option>
+        ${pharmacyOptions}
+      </select>
+    </div>
+    <div class="fl"><label>Pharmacy Name</label><input id="sf-pharmacy" value="${esc(s ? s.pharmacy : (pf.pharmacy || ""))}" placeholder="e.g. Boots \u2013 High Street"></div>
+    <div class="fl"><label>Contractor / Legal Entity (for invoice)</label><input id="sf-contractor" value="${esc(s ? s.contractor : (pf.contractor || ""))}" placeholder="e.g. Boots UK Ltd"></div>
+    <div class="fl"><label>Pharmacy Address</label><textarea id="sf-address" rows="2" placeholder="Street, Town, Postcode">${esc(s ? s.pharmacyAddress || "" : (pf.pharmacyAddress || ""))}</textarea></div>
+    <div class="fl"><label>Accounts Email</label><input id="sf-email" type="email" value="${esc(s ? s.pharmacyEmail || "" : (pf.pharmacyEmail || ""))}"></div>
+    <hr class="divider">
+    <div class="frow">
+      <div class="fl"><label>Start Time</label><input type="time" id="sf-start" value="${s ? (s.startTime || "09:00") : "09:00"}" oninput="autoCalcHours()"></div>
+      <div class="fl"><label>End Time</label><input type="time" id="sf-end" value="${s ? (s.endTime || "") : ""}" oninput="autoCalcHours()"></div>
+    </div>
+    <div class="frow">
+      <div class="fl">
+        <label>Break Duration (mins) <span style="color:var(--muted)">default 30</span></label>
+        <input type="number" id="sf-break" value="${s ? (s.breakMins !== undefined ? s.breakMins : 30) : 30}" min="0" step="5" oninput="updateCalc()">
+      </div>
+      <div class="fl" style="justify-content:flex-end;padding-top:18px">
+        <label class="cbrow"><input type="checkbox" id="sf-break-paid" onchange="updateCalc()" ${s && s.breakPaid ? "checked" : ""}> Break is paid</label>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="fl"><label>Hours on site <span style="color:var(--muted)">(auto from times or enter manually)</span></label><input type="number" id="sf-hours" value="${s ? s.hours : (pf.hours || "")}" placeholder="e.g. 8.5" step="0.25" min="0" oninput="updateCalc()"></div>
+      <div class="fl"><label>Hourly Rate (GBP)</label><input type="number" id="sf-rate" value="${s ? s.rate : (pf.rate || "")}" placeholder="e.g. 28.00" step="0.50" min="0" oninput="updateCalc()"></div>
+    </div>
+    <div class="fl">
+      <label>Mileage (miles) &mdash; recorded for accounts at 45p/mi</label>
+      <input type="number" id="sf-mileage" value="${s ? s.mileage || "" : ""}" placeholder="0 \u2014 majority of contractors do not reimburse travel" min="0" oninput="updateCalc()">
+      <div class="hint" id="sf-mileage-hint" style="display:none"></div>
+    </div>
+    <div>
+      <label class="cbrow"><input type="checkbox" id="sf-exp-cb" onchange="toggleExpenses()" ${s && s.expensesClaimed ? "checked" : ""}> Contractor is reimbursing expenses (e.g. parking)</label>
+      <div id="sf-exp-fields" style="${s && s.expensesClaimed ? "" : "display:none"};margin-top:8px" class="frow">
+        <div class="fl"><label>Expenses Amount (GBP)</label><input type="number" id="sf-exp-amt" value="${s ? s.expensesAmount || "" : ""}" placeholder="0.00" step="0.01" oninput="updateCalc()"></div>
+        <div class="fl"><label>Description</label><input id="sf-exp-note" value="${esc(s ? s.expensesNote || "" : "")}" placeholder="e.g. Car parking"></div>
+      </div>
+    </div>
+    <hr class="divider">
+    <div>
+      <label class="cbrow"><input type="checkbox" id="sf-invoice-cb" ${invoiceDefault ? "checked" : ""}> <span id="sf-invoice-label">Invoice required</span></label>
+    </div>
+    <div class="fl"><label>Notes</label><textarea id="sf-notes" rows="2" placeholder="Any additional notes\u2026">${esc(s ? s.notes || "" : (pf.notes || ""))}</textarea></div>
+    <div class="calc-box" id="sf-calc" style="display:none"></div>
+    <div id="sf-err" class="err-msg" style="display:none"></div>
+    <div class="fa">
+      ${s ? `<button class="btn btn-d btn-sm" onclick="deleteShift('${esc(s.id)}')">Delete</button>` : ""}
+      <button class="btn btn-g" onclick="closeModal('shift-modal')">Cancel</button>
+      <button class="btn btn-p" onclick="saveShift()">${s ? "Save Changes" : "Save Shift"}</button>
+    </div>`;
+
+  onSourceChange();
+  updateCalc();
+  openModal("shift-modal");
+}
+
+function onSourceChange() {
+  const src = document.getElementById("sf-source").value;
+  const cb = document.getElementById("sf-invoice-cb");
+  const lbl = document.getElementById("sf-invoice-label");
+  if (src !== "LAL") cb.checked = SOURCE_INVOICE_DEFAULT[src];
+  lbl.innerHTML = src === "LAL"
+    ? "Invoice required for this LAL booking (toggle &mdash; some LAL bookings auto-pay)"
+    : `Invoice required (${esc(src)} &mdash; ${SOURCE_INVOICE_DEFAULT[src] ? "always on" : "default off"})`;
+}
+
+function onPharmacySelect() {
+  const id = document.getElementById("sf-pharma-sel").value;
+  if (!id) return;
+  const ph = state.pharmacies.find(p => p.id === id);
+  if (!ph) return;
+  document.getElementById("sf-pharmacy").value = ph.name;
+  document.getElementById("sf-contractor").value = ph.contractor;
+  document.getElementById("sf-address").value = ph.address || "";
+  document.getElementById("sf-email").value = ph.email || "";
+  document.getElementById("sf-rate").value = ph.defaultRate;
+  if (document.getElementById("sf-break")) document.getElementById("sf-break").value = ph.defaultBreakMins !== undefined ? ph.defaultBreakMins : 30;
+  if (document.getElementById("sf-break-paid")) document.getElementById("sf-break-paid").checked = ph.defaultBreakPaid || false;
+  updateCalc();
+}
+
+function autoCalcHours() {
+  const start = document.getElementById("sf-start").value;
+  const end = document.getElementById("sf-end").value;
+  if (!start || !end) return;
+  const [sh, sm] = start.split(":").map(Number);
+  const [eh, em] = end.split(":").map(Number);
+  let mins = (eh * 60 + em) - (sh * 60 + sm);
+  if (mins <= 0) mins += 24 * 60; // overnight
+  document.getElementById("sf-hours").value = (mins / 60).toFixed(2).replace(/\.?0+$/, "");
+  updateCalc();
+}
+
+function toggleExpenses() {
+  const show = document.getElementById("sf-exp-cb").checked;
+  document.getElementById("sf-exp-fields").style.display = show ? "" : "none";
+  updateCalc();
+}
+
+function updateCalc() {
+  const hoursOnSite = parseFloat(document.getElementById("sf-hours").value) || 0;
+  const rate = parseFloat(document.getElementById("sf-rate").value) || 0;
+  const breakMins = parseInt(document.getElementById("sf-break").value) || 0;
+  const breakPaidCb = document.getElementById("sf-break-paid");
+  const breakPaid = breakPaidCb && breakPaidCb.checked;
+  const mileage = parseFloat(document.getElementById("sf-mileage").value) || 0;
+  const expCb = document.getElementById("sf-exp-cb");
+  const expAmt = expCb && expCb.checked ? (parseFloat(document.getElementById("sf-exp-amt").value) || 0) : 0;
+
+  const breakH = breakMins / 60;
+  const ph = breakPaid ? hoursOnSite : Math.max(0, hoursOnSite - breakH);
+  const labour = ph * rate;
+  const total = labour + expAmt;
+  const mileVal = mileage * MILEAGE_RATE;
+
+  const mh = document.getElementById("sf-mileage-hint");
+  if (mh) { mh.textContent = `Accounts value: ${fmtGBP(mileVal)} \u2014 will NOT appear on invoice`; mh.style.display = mileage > 0 ? "" : "none"; }
+
+  const calc = document.getElementById("sf-calc");
+  if (hoursOnSite && rate) {
+    calc.style.display = "";
+    let breakdown = `${hoursOnSite}h on site`;
+    if (breakMins > 0) {
+      breakdown += breakPaid
+        ? ` <span style="color:var(--teal);font-size:11px">(break paid)</span>`
+        : ` &minus; ${breakMins}m break = <strong>${ph.toFixed(2)}h paid</strong>`;
+    }
+    breakdown += ` &times; ${fmtGBP(rate)}/h`;
+    if (expAmt) breakdown += ` + ${fmtGBP(expAmt)} expenses`;
+    breakdown += ` = <strong style="font-family:var(--serif);font-size:18px;color:var(--teal);margin-left:4px">${fmtGBP(total)}</strong>`;
+    if (mileage > 0) breakdown += `<span class="c-muted" style="margin-left:10px;font-size:11px"> + ${mileage}mi (${fmtGBP(mileVal)}) accounts only</span>`;
+    calc.innerHTML = breakdown;
+  } else {
+    calc.style.display = "none";
+  }
+}
+
+function saveShift() {
+  const pharmacy = document.getElementById("sf-pharmacy").value.trim();
+  const date = document.getElementById("sf-date").value;
+  const hoursOnSite = parseFloat(document.getElementById("sf-hours").value);
+  const rate = parseFloat(document.getElementById("sf-rate").value);
+  const err = document.getElementById("sf-err");
+
+  if (!date || !pharmacy || isNaN(hoursOnSite) || isNaN(rate)) {
+    err.textContent = "Date, pharmacy, hours and rate are required."; err.style.display = ""; return;
+  }
+  err.style.display = "none";
+
+  const existing = state.editingShift;
+  const startTime = document.getElementById("sf-start") ? document.getElementById("sf-start").value || "09:00" : "09:00";
+  const endTimeInput = document.getElementById("sf-end") ? document.getElementById("sf-end").value : "";
+  const breakMins = parseInt(document.getElementById("sf-break") ? document.getElementById("sf-break").value : 30) || 0;
+  const breakPaid = document.getElementById("sf-break-paid") ? document.getElementById("sf-break-paid").checked : false;
+
+  const s = {
+    id: existing ? existing.id : "sh-" + Date.now(),
+    date, pharmacy,
+    contractor: document.getElementById("sf-contractor").value.trim(),
+    pharmacyAddress: document.getElementById("sf-address").value.trim(),
+    pharmacyEmail: document.getElementById("sf-email").value.trim(),
+    pharmacyId: document.getElementById("sf-pharma-sel").value || "",
+    source: document.getElementById("sf-source").value,
+    hours: hoursOnSite,
+    rate,
+    breakMins,
+    breakPaid,
+    startTime,
+    endTime: endTimeInput || autoEndTime(startTime, hoursOnSite),
+    mileage: parseFloat(document.getElementById("sf-mileage").value) || 0,
+    expensesClaimed: document.getElementById("sf-exp-cb").checked,
+    expensesAmount: parseFloat(document.getElementById("sf-exp-amt") ? document.getElementById("sf-exp-amt").value : 0) || 0,
+    expensesNote: document.getElementById("sf-exp-note") ? document.getElementById("sf-exp-note").value.trim() : "",
+    needsInvoice: document.getElementById("sf-invoice-cb").checked,
+    notes: document.getElementById("sf-notes").value.trim(),
+    invoiceId: existing ? existing.invoiceId : null,
+    invoiceSent: existing ? existing.invoiceSent : false,
+    calEventId: existing ? existing.calEventId : null,
+  };
+
+  if (existing) {
+    state.shifts = state.shifts.map(x => x.id === s.id ? s : x);
+  } else {
+    state.shifts.push(s);
+  }
+  save(); closeModal("shift-modal"); render();
+
+  if (state.settings.calendarEnabled && state.settings.sheetsUrl) {
+    pushToCalendar(s, s.calEventId).then(eventId => {
+      if (eventId) {
+        state.shifts = state.shifts.map(x => x.id === s.id ? { ...x, calEventId: eventId } : x);
+        DB.set("pv_shifts", state.shifts);
+      }
+    });
+  }
+}
+
+function autoEndTime(startTime, hours) {
+  const [h, m] = startTime.split(":").map(Number);
+  const totalMins = h * 60 + m + Math.round((hours || 8) * 60);
+  return String(Math.floor(totalMins / 60) % 24).padStart(2, "0") + ":" + String(totalMins % 60).padStart(2, "0");
+}
+
+function deleteShift(id) {
+  const s = state.shifts.find(x => x.id === id);
+  if (s && s.calEventId) deleteCalendarEvent(s.calEventId);
+  state.shifts = state.shifts.filter(x => x.id !== id);
+  save(); closeModal("shift-modal"); render();
+}
+
+// ── Pharmacy Modal ────────────────────────────────────────────────────────────
+function openPharmacyModal(id) {
+  state.editingPharmacy = id ? state.pharmacies.find(p => p.id === id) : null;
+  const p = state.editingPharmacy;
+  document.getElementById("pharmacy-modal-title").textContent = p ? "Edit Pharmacy" : "Add Pharmacy";
+  document.getElementById("pharmacy-form").innerHTML = `
+    <div class="fl"><label>Pharmacy Name</label><input id="pm-name" value="${esc(p ? p.name : "")}" placeholder="e.g. Boots \u2013 High Street"></div>
+    <div class="fl"><label>Contractor / Legal Entity</label><input id="pm-contractor" value="${esc(p ? p.contractor : "")}" placeholder="e.g. Boots UK Ltd"></div>
+    <div class="fl"><label>Full Address (as it appears on invoices)</label><textarea id="pm-address" rows="3">${esc(p ? p.address : "")}</textarea></div>
+    <div class="frow">
+      <div class="fl"><label>Accounts Email</label><input type="email" id="pm-email" value="${esc(p ? p.email : "")}"></div>
+      <div class="fl"><label>Default Hourly Rate (GBP)</label><input type="number" id="pm-rate" value="${p ? p.defaultRate : "27"}" step="0.50"></div>
+    </div>
+    <hr class="divider">
+    <div style="font-weight:600;font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase">Break Defaults</div>
+    <div class="frow">
+      <div class="fl"><label>Default Break Duration (mins)</label><input type="number" id="pm-break" value="${p ? (p.defaultBreakMins !== undefined ? p.defaultBreakMins : 30) : 30}" min="0" step="5"></div>
+      <div class="fl" style="justify-content:flex-end;padding-top:18px"><label class="cbrow"><input type="checkbox" id="pm-break-paid" ${p && p.defaultBreakPaid ? "checked" : ""}> Breaks usually paid here</label></div>
+    </div>
+    <div id="pm-err" class="err-msg" style="display:none"></div>
+    <div class="fa">
+      <button class="btn btn-g" onclick="closeModal('pharmacy-modal')">Cancel</button>
+      <button class="btn btn-p" onclick="savePharmacy()">${p ? "Save Changes" : "Add Pharmacy"}</button>
+    </div>`;
+  openModal("pharmacy-modal");
+}
+
+function savePharmacy() {
+  const name = document.getElementById("pm-name").value.trim();
+  const err = document.getElementById("pm-err");
+  if (!name) { err.textContent = "Pharmacy name required."; err.style.display = ""; return; }
+  err.style.display = "none";
+  const existing = state.editingPharmacy;
+  const p = {
+    id: existing ? existing.id : "ph-" + Date.now(),
+    name, contractor: document.getElementById("pm-contractor").value.trim(),
+    address: document.getElementById("pm-address").value.trim(),
+    email: document.getElementById("pm-email").value.trim(),
+    defaultRate: parseFloat(document.getElementById("pm-rate").value) || 0,
+    defaultBreakMins: parseInt(document.getElementById("pm-break").value) || 0,
+    defaultBreakPaid: document.getElementById("pm-break-paid").checked,
+  };
+  if (existing) { state.pharmacies = state.pharmacies.map(x => x.id === p.id ? p : x); }
+  else { state.pharmacies.push(p); }
+  save(); closeModal("pharmacy-modal"); render();
+}
+
+// ── Create Invoice Modal ──────────────────────────────────────────────────────
+function openCreateInvoiceModal(key) {
+  const groups = groupUninvoiced();
+  const g = groups.find(gr => gr.key === key);
+  if (!g) return;
+  state.createInvoiceGroup = g;
+  const tot = g.shifts.reduce((a,s) => a + shiftTotal(s), 0);
+  const issued = todayStr();
+
+  let rows = g.shifts.map(s => {
+    const ph = paidHours(s);
+    const breakNote = s.breakMins > 0 ? (s.breakPaid ? ` (break paid)` : ` &minus;${s.breakMins}m`) : "";
+    return `<tr>
+      <td class="mono">${fmtDate(s.date)}</td>
+      <td>${s.hours}h${breakNote} = <strong>${ph}h</strong></td>
+      <td class="mono">${fmtGBP(s.rate)}/h</td>
+      <td class="mono">${s.expensesClaimed && s.expensesAmount > 0 ? fmtGBP(s.expensesAmount) : "\u2014"}</td>
+      <td class="mono fw6">${fmtGBP(shiftTotal(s))}</td>
+    </tr>`;
+  }).join("");
+
+  document.getElementById("create-invoice-form").innerHTML = `
+    <div class="banner banner-t">Invoicing <strong>${esc(g.pharmacy)}</strong> &mdash; ${g.shifts.length} shift${g.shifts.length > 1 ? "s" : ""}, total <strong>${fmtGBP(tot)}</strong></div>
+    <table style="font-size:12px"><thead><tr><th>Date</th><th>Hours</th><th>Rate</th><th>Expenses</th><th>Subtotal</th></tr></thead><tbody>${rows}</tbody></table>
+    <div class="frow">
+      <div class="fl"><label>Issue Date</label><input type="date" id="ci-issued" value="${issued}" oninput="updateCiDue()"></div>
+      <div class="fl"><label>Due Date (14 days)</label><input id="ci-due" value="${fmtDate(addDays(issued, 14))}" disabled style="opacity:.6"></div>
+    </div>
+    <div class="fl"><label>Notes (optional &mdash; appears on invoice)</label><textarea id="ci-notes" rows="2" placeholder="e.g. Please remit to bank details below"></textarea></div>
+    <div class="fa">
+      <button class="btn btn-g" onclick="closeModal('create-invoice-modal')">Cancel</button>
+      <button class="btn btn-p" onclick="createInvoice()">Create Invoice</button>
+    </div>`;
+  openModal("create-invoice-modal");
+}
+
+function updateCiDue() {
+  const issued = document.getElementById("ci-issued").value;
+  document.getElementById("ci-due").value = issued ? fmtDate(addDays(issued, 14)) : "";
+}
+
+function generateAllInvoices() {
+  const groups = groupUninvoiced();
+  groups.forEach(g => {
+    const seq = state.invSeq++; DB.set("pv_invseq", state.invSeq);
+    const num = invoiceNo(seq), issued = todayStr();
+    const lineItems = g.shifts.map(s => ({ shiftId: s.id, date: s.date, hours: s.hours, breakMins: s.breakMins || 0, breakPaid: s.breakPaid || false, paidHrs: paidHours(s), rate: s.rate, mileage: s.mileage || 0, expensesClaimed: s.expensesClaimed || false, expensesAmount: s.expensesAmount || 0, expensesNote: s.expensesNote || "", subtotal: shiftTotal(s) }));
+    const total = lineItems.reduce((a,l) => a + l.subtotal, 0);
+    const inv = { id: "inv-" + Date.now() + "-" + seq, number: num, issued, dueDate: addDays(issued, 14), expectedPayDate: endOfFollowingMonth(issued), pharmacyName: g.pharmacy, contractor: g.contractor, pharmacyAddress: g.pharmacyAddress, pharmacyEmail: g.pharmacyEmail, lineItems, total, paid: false, paidDate: null, notes: "" };
+    state.invoices.push(inv);
+    state.shifts = state.shifts.map(s => g.shifts.find(gs => gs.id === s.id) ? { ...s, invoiceId: num } : s);
+  });
+  save(); render();
+}
+
+function createInvoice() {
+  const g = state.createInvoiceGroup;
+  if (!g) return;
+  const issued = document.getElementById("ci-issued").value;
+  const notes = document.getElementById("ci-notes").value.trim();
+  const seq = state.invSeq++; DB.set("pv_invseq", state.invSeq);
+  const num = invoiceNo(seq);
+  const lineItems = g.shifts.map(s => ({ shiftId: s.id, date: s.date, hours: s.hours, breakMins: s.breakMins || 0, breakPaid: s.breakPaid || false, paidHrs: paidHours(s), rate: s.rate, mileage: s.mileage || 0, expensesClaimed: s.expensesClaimed || false, expensesAmount: s.expensesAmount || 0, expensesNote: s.expensesNote || "", subtotal: shiftTotal(s) }));
+  const total = lineItems.reduce((a,l) => a + l.subtotal, 0);
+  const inv = { id: "inv-" + Date.now(), number: num, issued, dueDate: addDays(issued, 14), expectedPayDate: endOfFollowingMonth(issued), pharmacyName: g.pharmacy, contractor: g.contractor, pharmacyAddress: g.pharmacyAddress, pharmacyEmail: g.pharmacyEmail, lineItems, total, paid: false, paidDate: null, notes };
+  state.invoices.push(inv);
+  state.shifts = state.shifts.map(s => g.shifts.find(gs => gs.id === s.id) ? { ...s, invoiceId: num } : s);
+  save(); closeModal("create-invoice-modal"); render();
+}
+
+// ── Invoice Preview ───────────────────────────────────────────────────────────
+function openInvoicePreview(id) {
+  const inv = state.invoices.find(i => i.id === id);
+  if (!inv) return;
+  state.previewInvoice = inv;
+  const p = state.profile;
+  const bankMissing = !p.sortCode || p.sortCode === "XX-XX-XX";
+  const hasExpenses = inv.lineItems.some(l => l.expensesClaimed && l.expensesAmount > 0);
+  const expTotal = inv.lineItems.reduce((a,l) => a + (l.expensesClaimed ? l.expensesAmount || 0 : 0), 0);
+  const labourTotal = inv.lineItems.reduce((a,l) => a + (l.paidHrs !== undefined ? l.paidHrs : l.hours) * l.rate, 0);
+
+  // Modal head
+  document.getElementById("invoice-modal-head").innerHTML = `
+    <div class="fw6">${esc(inv.number)}</div>
+    ${inv.paid ? `<span class="tag tag-done">Paid ${fmtDate(inv.paidDate)}</span>` : ""}
+    ${inv.sent ? `<span class="tag tag-done" style="margin-left:4px">Sent ${fmtDate(inv.sentDate)}</span>` : ""}
+    <div class="mla flex gap-2">
+      ${!inv.sent ? `<button class="btn btn-s btn-sm" onclick="markSentFromPreview('${esc(inv.id)}')">&#10003; Mark Sent</button>` : ""}
+      ${!inv.paid ? `<button class="btn btn-pay btn-sm" onclick="markPaidFromPreview('${esc(inv.id)}')">&#10003; Mark Paid</button>` : ""}
+      <button class="btn btn-s btn-sm" onclick="printInvoice()">&#128424; Print / PDF</button>
+      <button class="btn btn-g btn-sm" onclick="closeModal('invoice-modal')">&#10005;</button>
+    </div>`;
+
+  // Line item rows
+  let lineRows = "";
+  inv.lineItems.forEach(l => {
+    const ph = l.paidHrs !== undefined ? l.paidHrs : l.hours;
+    const hasBreak = l.breakMins > 0;
+    const breakDesc = hasBreak
+      ? (l.breakPaid ? ` (incl. ${l.breakMins}m paid break)` : ` less ${l.breakMins}m unpaid break`)
+      : "";
+    const desc = `Locum pharmacist services${breakDesc}`;
+    lineRows += `<tr>
+      <td style="font-family:monospace;font-size:11.5px">${fmtDate(l.date)}</td>
+      <td>${esc(desc)}</td>
+      ${hasBreak && !l.breakPaid ? `<td style="text-align:right;font-family:monospace;font-size:10.5px;color:#6b7280">${l.hours}h &minus; ${l.breakMins}m<br><strong>${ph}h claimed</strong></td>` : `<td style="text-align:right;font-family:monospace">${ph}h</td>`}
+      <td style="text-align:right;font-family:monospace">${fmtGBP(l.rate)}/h</td>
+      <td style="text-align:right;font-family:monospace;font-weight:600">${fmtGBP(ph * l.rate)}</td>
+    </tr>`;
+    if (l.expensesClaimed && l.expensesAmount > 0) {
+      lineRows += `<tr class="inv-exp-row">
+        <td style="font-family:monospace;font-size:11.5px">${fmtDate(l.date)}</td>
+        <td style="color:#92400e">Expenses reimbursement &ndash; ${esc(l.expensesNote || "misc")}</td>
+        <td></td><td></td>
+        <td style="text-align:right;font-family:monospace;font-weight:600;color:#92400e">${fmtGBP(l.expensesAmount)}</td>
+      </tr>`;
+    }
+  });
+
+  const invHtml = `
+    <div class="inv-wrap" id="inv-content">
+      ${bankMissing ? `<div class="inv-notebox">&#9888; Bank details not set &mdash; go to <strong>My Profile</strong> to add your sort code and account number before sending.</div>` : ""}
+      <div class="inv-top">
+        <div><div class="inv-brand">Pharmiverse</div><div class="inv-brand-sub">Solutions Ltd</div></div>
+        <div class="inv-num-block">
+          <div class="inv-num-n">${esc(inv.number)}</div>
+          <div class="inv-meta">Issued: ${fmtDate(inv.issued)}</div>
+          <div class="inv-meta">Due: ${fmtDate(inv.dueDate)} (14 days)</div>
+        </div>
+      </div>
+      <div class="inv-addrs">
+        <div>
+          <div class="inv-al">From</div>
+          <div class="inv-an">${esc(p.company)}</div>
+          <div class="inv-ad">${esc(p.companyAddress)}</div>
+          <div class="inv-ad" style="margin-top:6px">${esc(p.name)}</div>
+          <span class="inv-gphc">${esc(p.gphc)}</span>
+          <div class="inv-ad" style="margin-top:4px">${esc(p.email)} &middot; ${esc(p.phone)}</div>
+          <div class="inv-ad" style="font-size:10.5px;color:#9ca3af;margin-top:3px">${esc(p.companyNo)}</div>
+        </div>
+        <div>
+          <div class="inv-al">To</div>
+          <div class="inv-an">${esc(inv.contractor || inv.pharmacyName)}</div>
+          <div class="inv-ad">${esc(inv.pharmacyName)}</div>
+          ${inv.pharmacyAddress ? `<div class="inv-ad">${esc(inv.pharmacyAddress)}</div>` : ""}
+          ${inv.pharmacyEmail ? `<div class="inv-ad" style="margin-top:4px">${esc(inv.pharmacyEmail)}</div>` : ""}
+        </div>
+      </div>
+      <table class="inv-t">
+        <thead><tr><th>Date</th><th>Description</th><th style="text-align:right">Hrs</th><th style="text-align:right">Rate</th><th style="text-align:right">Amount</th></tr></thead>
+        <tbody>${lineRows}</tbody>
+      </table>
+      <div class="inv-totals">
+        <table>
+          <tbody>
+            <tr><td>Labour</td><td style="text-align:right;font-family:monospace">${fmtGBP(labourTotal)}</td></tr>
+            ${hasExpenses ? `<tr><td>Expenses</td><td style="text-align:right;font-family:monospace">${fmtGBP(expTotal)}</td></tr>` : ""}
+            <tr class="inv-grand"><td>Total Due</td><td style="text-align:right;font-family:monospace;color:#00875f">${fmtGBP(inv.total)}</td></tr>
+          </tbody>
+        </table>
+      </div>
+      ${inv.notes ? `<p style="font-size:11.5px;color:#4b5563;margin-bottom:12px;font-style:italic">${esc(inv.notes)}</p>` : ""}
+      <div class="inv-terms">
+        <strong>Payment:</strong> ${esc(p.company)} &middot; Sort Code ${esc(p.sortCode)} &middot; Account No. ${esc(p.accountNo)}<br>
+        Please use reference <strong>${esc(inv.number)}</strong> &middot; Payment terms: 14 days from invoice date<br>
+        ${esc(p.company)} &middot; ${esc(p.companyNo)} &middot; Registered in England &amp; Wales
+      </div>
+    </div>`;
+
+  document.getElementById("invoice-preview-wrap").innerHTML = invHtml;
+  document.getElementById("invoice-modal-tip").innerHTML = `&#128161; <strong>Monzo tip:</strong> Print &rarr; Save as PDF, then attach to a Monzo Business invoice or email to ${esc(inv.pharmacyEmail || "the pharmacy accounts team")}`;
+
+  openModal("invoice-modal");
+}
+
+function markPaidFromPreview(id) {
+  state.invoices = state.invoices.map(i => i.id === id ? { ...i, paid: true, paidDate: todayStr() } : i);
+  save(); closeModal("invoice-modal"); render();
+}
+
+function markSentFromPreview(id) {
+  state.invoices = state.invoices.map(i => i.id === id ? { ...i, sent: true, sentDate: todayStr() } : i);
+  save(); openInvoicePreview(id);
+}
+
+function printInvoice() {
+  const content = document.getElementById("inv-content");
+  if (!content) return;
+  const pa = document.getElementById("print-area");
+  pa.innerHTML = content.outerHTML;
+  pa.style.display = "block";
+  window.print();
+  setTimeout(() => { pa.style.display = "none"; pa.innerHTML = ""; }, 1500);
+}
+
+// ── Modal helpers ─────────────────────────────────────────────────────────────
+function openModal(id) {
+  document.getElementById(id).classList.add("open");
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove("open");
+}
+
+// Close modals on overlay click
+["shift-modal", "pharmacy-modal", "invoice-modal", "create-invoice-modal", "import-modal"].forEach(id => {
+  document.getElementById(id).addEventListener("click", function(e) {
+    if (e.target === this) closeModal(id);
+  });
+});
+
+// ── Settings in state ─────────────────────────────────────────────────────────
+// settings initialised in state object above
+
+function saveSettings() {
+  DB.set("pv_settings", state.settings);
+}
+
+// ── Settings Page ─────────────────────────────────────────────────────────────
+function renderSettings() {
+  const s = state.settings;
+
+  gel("settings-anthropic-wrap").innerHTML = `
+    <div class="fg">
+      <div style="font-weight:600;font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase">&#9889; Email Import &mdash; Claude AI</div>
+      <div class="banner banner-t" style="margin-bottom:0">The email import feature uses the Anthropic API to read booking confirmations and extract shift details automatically. Requires a free Anthropic API key.</div>
+      <div class="fl">
+        <label>Anthropic API Key</label>
+        <input type="text" id="s-apikey" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" value="${esc(s.anthropicKey)}" placeholder="sk-ant-api03-..." style="font-family:var(--mono);font-size:12px">
+        <div class="hint">Get a free key at <strong>console.anthropic.com</strong> &rarr; API Keys. Your key is stored locally in your browser only &mdash; never sent anywhere except Anthropic.</div>
+      </div>
+      <div id="s-key-status" class="sheets-status sheets-pending" style="${s.anthropicKey ? '' : 'display:none'}">
+        ${s.anthropicKey ? '&#10003; API key saved' : ''}
+      </div>
+      <div class="fa"><button class="btn btn-p" onclick="saveApiKey()">Save API Key</button></div>
+    </div>`;
+
+  gel("settings-sheets-wrap").innerHTML = `
+    <div class="fg">
+      <div style="font-weight:600;font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase">&#9783; Google Sheets Sync</div>
+      <div class="banner banner-t" style="margin-bottom:0">Syncs your shifts and invoices to a Google Sheet automatically after every save. Gives you a live backup viewable on any device, shareable with your accountant.</div>
+      <div style="background:var(--s3);border:1px solid var(--border);border-radius:10px;padding:16px 18px">
+        <div style="font-weight:600;font-size:12.5px;margin-bottom:10px;color:var(--text)">One-time setup (5 minutes):</div>
+        <ol style="font-size:12.5px;color:var(--subtle);line-height:2;padding-left:20px">
+          <li>Open <strong style="color:var(--text)">Google Sheets</strong> and create a new spreadsheet named <em>Pharmiverse Hub</em></li>
+          <li>Go to <strong style="color:var(--text)">Extensions &rarr; Apps Script</strong></li>
+          <li>Delete any existing code, then paste in the <strong style="color:var(--text)">Apps Script code</strong> below</li>
+          <li>Click <strong style="color:var(--text)">Deploy &rarr; New deployment &rarr; Web app</strong></li>
+          <li>Set <em>Execute as: Me</em> and <em>Who has access: Anyone</em>, then click Deploy</li>
+          <li>Copy the <strong style="color:var(--text)">Web app URL</strong> and paste it below</li>
+        </ol>
+        <div style="margin-top:12px">
+          <button class="btn btn-s btn-sm" onclick="showAppsScript()">&#128203; Copy Apps Script Code</button>
+          <div id="apps-script-box" style="display:none;margin-top:10px">
+            <textarea id="apps-script-code" rows="6" style="font-family:var(--mono);font-size:11px" readonly></textarea>
+            <button class="btn btn-g btn-sm" style="margin-top:6px" onclick="copyAppsScript()">Copy to clipboard</button>
+          </div>
+        </div>
+      </div>
+      <div class="fl">
+        <label>Google Apps Script Web App URL</label>
+        <input type="url" id="s-sheetsurl" value="${esc(s.sheetsUrl)}" placeholder="https://script.google.com/macros/s/.../exec">
+      </div>
+      <label class="cbrow"><input type="checkbox" id="s-sheetsenabled" ${s.sheetsEnabled ? "checked" : ""}> Enable automatic sync to Google Sheets</label>
+      <div id="s-sheets-status" class="sheets-status ${s.sheetsUrl && s.sheetsEnabled ? 'sheets-ok' : 'sheets-pending'}" style="${!s.sheetsUrl ? 'display:none' : ''}">
+        ${s.sheetsUrl && s.sheetsEnabled ? '&#10003; Sync enabled &mdash; data will push to Sheets on every save' : 'Sync disabled'}
+      </div>
+      <div class="fa">
+        <button class="btn btn-s" onclick="testSheetsConnection()">Test Connection</button>
+        <button class="btn btn-p" onclick="saveSheetsSettings()">Save &amp; Sync Now</button>
+      </div>
+    </div>`;
+  gel("settings-calendar-wrap").innerHTML = `
+    <div class="fg">
+      <div style="font-weight:600;font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase">&#128197; Google Calendar Sync</div>
+      <div class="banner banner-t" style="margin-bottom:0">When you save a shift, it automatically creates a grey calendar event with the shift timings and pharmacy location. Uses the same Apps Script as Sheets &mdash; no extra setup needed if you already configured that.</div>
+      <div style="background:var(--s3);border:1px solid var(--border);border-radius:10px;padding:16px 18px">
+        <div style="font-weight:600;font-size:12.5px;margin-bottom:8px;color:var(--text)">How it works:</div>
+        <ul style="font-size:12.5px;color:var(--subtle);line-height:2.1;padding-left:18px">
+          <li>Uses the <strong style="color:var(--text)">same Apps Script Web App URL</strong> as Google Sheets above</li>
+          <li>Events are created in your <strong style="color:var(--text)">primary Google Calendar</strong> as <strong style="color:var(--text)">grey (graphite)</strong></li>
+          <li>Event title: <em style="color:var(--text)">Locum &mdash; [Pharmacy Name]</em></li>
+          <li>Location set to pharmacy address, description includes rate and booking source</li>
+          <li>If you update or delete a shift, the calendar event updates or removes too</li>
+          <li><strong style="color:var(--text)">Important:</strong> update your Apps Script with the new code below &mdash; it adds Calendar support</li>
+        </ul>
+        <div style="margin-top:12px">
+          <button class="btn btn-s btn-sm" onclick="showCalendarScript()">&#128203; Copy Updated Apps Script</button>
+          <div id="calendar-script-box" style="display:none;margin-top:10px">
+            <textarea id="calendar-script-code" rows="6" style="font-family:var(--mono);font-size:11px" readonly></textarea>
+            <button class="btn btn-g btn-sm" style="margin-top:6px" onclick="copyCalendarScript()">Copy to clipboard</button>
+          </div>
+        </div>
+      </div>
+      <label class="cbrow"><input type="checkbox" id="s-calenabled" ${s.calendarEnabled ? "checked" : ""}> Enable automatic Google Calendar events when shifts are saved</label>
+      <div id="s-cal-status" class="sheets-status ${s.calendarEnabled ? 'sheets-ok' : 'sheets-pending'}" style="${!s.calendarEnabled ? 'display:none' : ''}">
+        ${s.calendarEnabled ? '&#10003; Calendar sync enabled &mdash; events will be created/updated on each shift save' : ''}
+      </div>
+      <div class="fa">
+        <button class="btn btn-p" onclick="saveCalendarSettings()">Save</button>
+      </div>
+    </div>`;}
+
+function saveApiKey() {
+  const input = document.getElementById("s-apikey") || gel("s-apikey");
+  if (!input) return;
+  state.settings.anthropicKey = input.value.trim();
+  saveSettings();
+  const el = document.getElementById("s-key-status") || gel("s-key-status");
+  if (el) { el.className = "sheets-status sheets-ok"; el.style.display = ""; el.textContent = state.settings.anthropicKey ? "\u2713 API key saved" : "No key saved"; }
+}
+
+function saveSheetsSettings() {
+  state.settings.sheetsUrl = document.getElementById("s-sheetsurl").value.trim();
+  state.settings.sheetsEnabled = document.getElementById("s-sheetsenabled").checked;
+  saveSettings();
+  const el = document.getElementById("s-sheets-status");
+  el.style.display = "";
+  if (state.settings.sheetsUrl && state.settings.sheetsEnabled) {
+    el.className = "sheets-status sheets-ok";
+    el.textContent = "\u2713 Sync enabled";
+    pushToSheets();
+  } else {
+    el.className = "sheets-status sheets-pending";
+    el.textContent = "Sync disabled";
+  }
+}
+
+function saveCalendarSettings() {
+  state.settings.calendarEnabled = document.getElementById("s-calenabled").checked;
+  saveSettings();
+  const el = document.getElementById("s-cal-status");
+  el.style.display = "";
+  if (state.settings.calendarEnabled) {
+    el.className = "sheets-status sheets-ok";
+    el.textContent = "\u2713 Calendar sync enabled";
+  } else {
+    el.className = "sheets-status sheets-pending";
+    el.textContent = "Calendar sync disabled";
+  }
+}
+
+function showCalendarScript() {
+  const box = document.getElementById("calendar-script-box");
+  const ta = document.getElementById("calendar-script-code");
+  ta.value = CALENDAR_APPS_SCRIPT_CODE;
+  box.style.display = box.style.display === "none" ? "" : "none";
+}
+
+function copyCalendarScript() {
+  const ta = document.getElementById("calendar-script-code");
+  ta.select();
+  document.execCommand("copy");
+  const btn = event.target;
+  btn.textContent = "\u2713 Copied!";
+  setTimeout(() => btn.textContent = "Copy to clipboard", 2000);
+}
+
+async function testSheetsConnection() {
+  const url = document.getElementById("s-sheetsurl").value.trim();
+  const el = document.getElementById("s-sheets-status");
+  if (!url) { el.style.display=""; el.className="sheets-status sheets-err"; el.textContent="No URL entered."; return; }
+  el.style.display=""; el.className="sheets-status sheets-pending"; el.textContent="Testing\u2026";
+  try {
+    const r = await fetch(url + "?action=ping", { method: "GET" });
+    const t = await r.text();
+    if (t.includes("pong") || r.ok) { el.className="sheets-status sheets-ok"; el.textContent="\u2713 Connection successful!"; }
+    else { el.className="sheets-status sheets-err"; el.textContent="Connected but unexpected response. Check the Apps Script is deployed correctly."; }
+  } catch(e) {
+    el.className="sheets-status sheets-err"; el.textContent="Connection failed: " + e.message + ". Check the URL and that the script is deployed as a web app.";
+  }
+}
+
+// ── Google Sheets Sync ────────────────────────────────────────────────────────
+async function pushToSheets() {
+  const s = state.settings;
+  if (!s.sheetsEnabled || !s.sheetsUrl) return;
+  try {
+    const payload = {
+      action: "sync",
+      shifts: state.shifts,
+      invoices: state.invoices,
+      pharmacies: state.pharmacies,
+      synced: new Date().toISOString()
+    };
+    await fetch(s.sheetsUrl, {
+      method: "POST",
+      body: JSON.stringify(payload)
+    });
+  } catch(e) {
+    console.warn("Sheets sync failed:", e.message);
+  }
+}
+
+// ── Apps Script code to display ───────────────────────────────────────────────
+const APPS_SCRIPT_CODE = `// Pharmiverse Hub - Google Apps Script
+// Deploy as Web App: Execute as Me, Anyone can access
+
+function doGet(e) {
+  if (e.parameter.action === "ping") {
+    return ContentService.createTextOutput("pong");
+  }
+  return ContentService.createTextOutput("Pharmiverse Hub sync active");
+}
+
+function doPost(e) {
+  try {
+    const data = JSON.parse(e.postData.contents);
+    if (data.action === "sync") {
+      const ss = SpreadsheetApp.getActiveSpreadsheet();
+      syncSheet(ss, "Shifts", data.shifts, ["id","date","pharmacy","contractor","source","hours","rate","mileage","expensesClaimed","expensesAmount","expensesNote","needsInvoice","invoiceId","notes"]);
+      syncSheet(ss, "Invoices", data.invoices, ["id","number","issued","dueDate","expectedPayDate","pharmacyName","contractor","total","paid","paidDate"]);
+      syncSheet(ss, "Pharmacies", data.pharmacies, ["id","name","contractor","address","email","defaultRate"]);
+      const meta = ss.getSheetByName("_Meta") || ss.insertSheet("_Meta");
+      meta.getRange("A1:B3").setValues([["Last Sync", data.synced],["Shifts", data.shifts.length],["Invoices", data.invoices.length]]);
+    }
+    return ContentService.createTextOutput(JSON.stringify({ok: true})).setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService.createTextOutput(JSON.stringify({ok: false, error: err.message})).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function syncSheet(ss, name, rows, cols) {
+  let sheet = ss.getSheetByName(name);
+  if (!sheet) sheet = ss.insertSheet(name);
+  sheet.clearContents();
+  if (!rows || rows.length === 0) { sheet.getRange(1,1,1,cols.length).setValues([cols]); return; }
+  const headers = cols;
+  const data = rows.map(r => cols.map(c => {
+    const v = r[c];
+    if (v === null || v === undefined) return "";
+    if (typeof v === "boolean") return v ? "Yes" : "No";
+    return String(v);
+  }));
+  sheet.getRange(1,1,1,headers.length).setValues([headers]);
+  sheet.getRange(2,1,data.length,headers.length).setValues(data);
+  sheet.getRange(1,1,1,headers.length).setFontWeight("bold").setBackground("#f3f4f6");
+  sheet.setFrozenRows(1);
+}`;
+
+// ── Calendar Apps Script ──────────────────────────────────────────────────────
+const CALENDAR_APPS_SCRIPT_CODE = `// Pharmiverse Hub - Google Apps Script (Sheets + Calendar)
+// Deploy as Web App: Execute as Me, Anyone can access
+// Replaces previous version - includes Calendar support
+
+function doGet(e) {
+  if (e.parameter.action === "ping") {
+    return ContentService.createTextOutput("pong");
+  }
+  return ContentService.createTextOutput("Pharmiverse Hub sync active");
+}
+
+function doPost(e) {
+  try {
+    const data = JSON.parse(e.postData.contents);
+
+    if (data.action === "sync") {
+      const ss = SpreadsheetApp.getActiveSpreadsheet();
+      syncSheet(ss, "Shifts", data.shifts, ["id","date","pharmacy","contractor","source","hours","rate","mileage","expensesClaimed","expensesAmount","expensesNote","needsInvoice","invoiceId","notes","startTime","endTime","calEventId"]);
+      syncSheet(ss, "Invoices", data.invoices, ["id","number","issued","dueDate","expectedPayDate","pharmacyName","contractor","total","paid","paidDate"]);
+      syncSheet(ss, "Pharmacies", data.pharmacies, ["id","name","contractor","address","email","defaultRate"]);
+      const meta = ss.getSheetByName("_Meta") || ss.insertSheet("_Meta");
+      meta.getRange("A1:B3").setValues([["Last Sync", data.synced],["Shifts", data.shifts.length],["Invoices", data.invoices.length]]);
+    }
+
+    if (data.action === "calendarEvent") {
+      const cal = CalendarApp.getDefaultCalendar();
+      const shift = data.shift;
+
+      // Build start/end datetime
+      const dateStr = shift.date; // YYYY-MM-DD
+      const startTime = shift.startTime || "09:00";
+      const endTime = shift.endTime || addHoursToTime(startTime, shift.hours || 8);
+
+      const startDt = new Date(dateStr + "T" + startTime + ":00");
+      const endDt = new Date(dateStr + "T" + endTime + ":00");
+
+      const title = "Locum \\u2014 " + shift.pharmacy;
+      const desc = [
+        "Rate: \\u00A3" + shift.rate + "/h",
+        "Hours: " + shift.hours + "h",
+        "Total: \\u00A3" + (shift.hours * shift.rate).toFixed(2),
+        "Source: " + shift.source,
+        shift.notes ? "Notes: " + shift.notes : ""
+      ].filter(Boolean).join("\\n");
+
+      const opts = {
+        description: desc,
+        location: shift.pharmacyAddress || shift.pharmacy,
+        colorId: "8" // Graphite / grey
+      };
+
+      let eventId = null;
+
+      if (data.existingEventId) {
+        // Update existing event
+        try {
+          const existing = cal.getEventById(data.existingEventId);
+          if (existing) {
+            existing.setTitle(title);
+            existing.setTime(startDt, endDt);
+            existing.setDescription(desc);
+            existing.setLocation(opts.location);
+            existing.setColor(CalendarApp.EventColor.GRAPHITE);
+            eventId = data.existingEventId;
+          }
+        } catch(err) {}
+      }
+
+      if (!eventId) {
+        // Create new event
+        const ev = cal.createEvent(title, startDt, endDt, opts);
+        ev.setColor(CalendarApp.EventColor.GRAPHITE);
+        eventId = ev.getId();
+      }
+
+      return ContentService.createTextOutput(JSON.stringify({ok: true, eventId: eventId})).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    if (data.action === "deleteCalendarEvent") {
+      try {
+        const cal = CalendarApp.getDefaultCalendar();
+        const ev = cal.getEventById(data.eventId);
+        if (ev) ev.deleteEvent();
+      } catch(err) {}
+      return ContentService.createTextOutput(JSON.stringify({ok: true})).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    return ContentService.createTextOutput(JSON.stringify({ok: true})).setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService.createTextOutput(JSON.stringify({ok: false, error: err.message})).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function addHoursToTime(timeStr, hours) {
+  const [h, m] = timeStr.split(":").map(Number);
+  const total = h * 60 + m + Math.round(hours * 60);
+  return String(Math.floor(total/60) % 24).padStart(2,"0") + ":" + String(total%60).padStart(2,"0");
+}
+
+function syncSheet(ss, name, rows, cols) {
+  let sheet = ss.getSheetByName(name);
+  if (!sheet) sheet = ss.insertSheet(name);
+  sheet.clearContents();
+  if (!rows || rows.length === 0) { sheet.getRange(1,1,1,cols.length).setValues([cols]); return; }
+  const data = rows.map(r => cols.map(c => {
+    const v = r[c];
+    if (v === null || v === undefined) return "";
+    if (typeof v === "boolean") return v ? "Yes" : "No";
+    return String(v);
+  }));
+  sheet.getRange(1,1,1,cols.length).setValues([cols]);
+  sheet.getRange(2,1,data.length,cols.length).setValues(data);
+  sheet.getRange(1,1,1,cols.length).setFontWeight("bold").setBackground("#f3f4f6");
+  sheet.setFrozenRows(1);
+}`;
+
+// ── Google Calendar Push ──────────────────────────────────────────────────────
+async function pushToCalendar(shift, existingEventId) {
+  const s = state.settings;
+  if (!s.calendarEnabled || !s.sheetsUrl) return null;
+  try {
+    const payload = {
+      action: "calendarEvent",
+      shift: shift,
+      existingEventId: existingEventId || null
+    };
+    const r = await fetch(s.sheetsUrl, { method: "POST", body: JSON.stringify(payload) });
+    const data = await r.json();
+    return data.ok ? data.eventId : null;
+  } catch(e) {
+    console.warn("Calendar push failed:", e.message);
+    return null;
+  }
+}
+
+async function deleteCalendarEvent(eventId) {
+  const s = state.settings;
+  if (!s.calendarEnabled || !s.sheetsUrl || !eventId) return;
+  try {
+    await fetch(s.sheetsUrl, { method: "POST", body: JSON.stringify({ action: "deleteCalendarEvent", eventId }) });
+  } catch(e) {}
+}
+
+function showAppsScript() {
+  const box = document.getElementById("apps-script-box");
+  const ta = document.getElementById("apps-script-code");
+  ta.value = APPS_SCRIPT_CODE;
+  box.style.display = box.style.display === "none" ? "" : "none";
+}
+
+function copyAppsScript() {
+  const ta = document.getElementById("apps-script-code");
+  ta.select();
+  document.execCommand("copy");
+  const btn = event.target;
+  btn.textContent = "\u2713 Copied!";
+  setTimeout(() => btn.textContent = "Copy to clipboard", 2000);
+}
+
+// ── Email Import ──────────────────────────────────────────────────────────────
+let importedData = null;
+
+function openImportModal() {
+  const s = state.settings;
+  if (!s.anthropicKey) {
+    // Show settings prompt
+    document.getElementById("import-step-paste").innerHTML = `
+      <div class="fg">
+        <div class="banner banner-a">&#9888; No API key set. Go to <strong>Settings</strong> to add your Anthropic API key first &mdash; it's free to get started.</div>
+        <div class="fa">
+          <button class="btn btn-g" onclick="closeModal('import-modal')">Cancel</button>
+          <button class="btn btn-p" onclick="closeModal('import-modal');goTo('settings')">Go to Settings &rarr;</button>
+        </div>
+      </div>`;
+  } else {
+    document.getElementById("import-step-paste").innerHTML = `
+      <div class="fg">
+        <div class="banner banner-t" style="margin-bottom:0">Paste your booking confirmation email below. Works with LAL, Locum Prime, and WhatsApp messages.</div>
+        <div class="fl"><label>Email / message content</label><textarea id="import-email-text" rows="10" placeholder="Paste the full booking confirmation email or message here..."></textarea></div>
+        <div id="import-err" class="err-msg" style="display:none"></div>
+        <div class="fa">
+          <button class="btn btn-g" onclick="closeModal('import-modal')">Cancel</button>
+          <button class="btn btn-p" onclick="parseEmail()">&#9889; Extract Details</button>
+        </div>
+      </div>`;
+  }
+  showImportStep("paste");
+  openModal("import-modal");
+}
+
+function showImportStep(step) {
+  ["paste","parsing","confirm"].forEach(s => {
+    document.getElementById("import-step-" + s).classList.toggle("active", s === step);
+  });
+}
+
+function importBack() {
+  showImportStep("paste");
+}
+
+async function parseEmail() {
+  const text = document.getElementById("import-email-text").value.trim();
+  if (!text) {
+    document.getElementById("import-err").textContent = "Please paste the email or message content.";
+    document.getElementById("import-err").style.display = "";
+    return;
+  }
+
+  showImportStep("parsing");
+
+  const pharmacyContext = state.pharmacies.length > 0
+    ? "Known pharmacies in the system: " + state.pharmacies.map(p => p.name + " (" + p.contractor + ")").join(", ") + "."
+    : "";
+
+  const prompt = `You are parsing a pharmacy locum booking confirmation. Extract the booking details from the text below.
+
+${pharmacyContext}
+
+Return ONLY a JSON object with these exact fields (no markdown, no explanation):
+{
+  "source": "LAL" | "Locum Prime" | "WhatsApp" | "Direct",
+  "pharmacy": "pharmacy name",
+  "contractor": "legal entity / contractor name if found, else empty string",
+  "pharmacyAddress": "address if found, else empty string",
+  "pharmacyEmail": "accounts email if found, else empty string",
+  "date": "YYYY-MM-DD",
+  "hours": number,
+  "rate": number (hourly rate in GBP, numbers only),
+  "mileage": 0,
+  "needsInvoice": true | false (false only if explicitly stated as auto-pay or direct payment via platform),
+  "notes": "any other relevant info",
+  "confidence": "high" | "medium" | "low",
+  "warnings": ["list any fields you were uncertain about or could not find"]
+}
+
+If you cannot determine a field with confidence, use null for numbers, empty string for strings.
+Today's date for reference: ${todayStr()}
+
+Booking text:
+${text}`;
+
+  try {
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": state.settings.anthropicKey,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true"
+      },
+      body: JSON.stringify({
+        model: "claude-haiku-4-5-20251001",
+        max_tokens: 800,
+        messages: [{ role: "user", content: prompt }]
+      })
+    });
+
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error?.message || "API error " + response.status);
+    }
+
+    const data = await response.json();
+    const raw = data.content[0].text.trim().replace(/```json|```/g, "").trim();
+    importedData = JSON.parse(raw);
+    showConfirmStep();
+  } catch(e) {
+    showImportStep("paste");
+    document.getElementById("import-err").textContent = "Error: " + e.message + ". Check your API key in Settings.";
+    document.getElementById("import-err").style.display = "";
+  }
+}
+
+function showConfirmStep() {
+  const d = importedData;
+  const srcColor = { LAL: "#3b9eff", "Locum Prime": "#f97316", WhatsApp: "#22c55e", Direct: "#a855f7" }[d.source] || "#888";
+
+  document.getElementById("import-source-banner").innerHTML =
+    `Detected source: <strong style="margin-left:4px">${esc(d.source || "Unknown")}</strong>
+     &nbsp;&middot;&nbsp; Confidence: <span style="color:${d.confidence==="high"?"var(--teal)":d.confidence==="medium"?"var(--amber)":"var(--red)"}">${esc(d.confidence || "unknown")}</span>`;
+
+  const fields = [
+    { label: "Pharmacy", val: d.pharmacy, key: "pharmacy" },
+    { label: "Contractor", val: d.contractor, key: "contractor" },
+    { label: "Date", val: d.date ? fmtDate(d.date) : null, key: "date" },
+    { label: "Hours", val: d.hours ? d.hours + "h" : null, key: "hours" },
+    { label: "Rate", val: d.rate ? fmtGBP(d.rate) + "/h" : null, key: "rate" },
+    { label: "Address", val: d.pharmacyAddress, key: "pharmacyAddress" },
+    { label: "Email", val: d.pharmacyEmail, key: "pharmacyEmail" },
+    { label: "Invoice needed", val: d.needsInvoice ? "Yes" : "No", key: "needsInvoice" },
+    { label: "Notes", val: d.notes, key: "notes" },
+  ];
+
+  let fieldsHtml = "";
+  fields.forEach(f => {
+    const missing = !f.val || f.val === "null";
+    const warned = d.warnings && d.warnings.some(w => w.toLowerCase().includes(f.key.toLowerCase()));
+    const dotClass = missing ? "conf-low" : warned ? "conf-med" : "conf-high";
+    fieldsHtml += `<div class="parsed-field">
+      <span class="parsed-label">${esc(f.label)}</span>
+      <span class="parsed-val" style="${missing ? "color:var(--muted);font-style:italic" : ""}">${missing ? "Not found" : esc(f.val)}</span>
+      <span class="confidence-dot ${dotClass}" title="${warned ? "Uncertain" : missing ? "Missing" : "Extracted"}"></span>
+    </div>`;
+  });
+
+  document.getElementById("import-parsed-fields").innerHTML = fieldsHtml;
+
+  const warnEl = document.getElementById("import-warnings");
+  if (d.warnings && d.warnings.length > 0) {
+    warnEl.style.display = "";
+    warnEl.innerHTML = "&#9888; Please check: " + d.warnings.map(w => esc(w)).join("; ");
+  } else {
+    warnEl.style.display = "none";
+  }
+
+  showImportStep("confirm");
+}
+
+function importConfirm() {
+  closeModal("import-modal");
+  // Pre-fill shift modal with parsed data
+  openShiftModal(null, importedData);
+}
+
+// ── Spinner animation ─────────────────────────────────────────────────────────
+const spinStyle = document.createElement("style");
+spinStyle.textContent = "@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}";
+document.head.appendChild(spinStyle);
+
+// ── Mobile nav handled by goTo/mobGoTo ──────────────────────────────────────
+function closeDrawer(){} // kept for compatibility
+
+// ── First-run API key prompt ──────────────────────────────────────────────────
+function checkFirstRun() {
+  const s = state.settings;
+  if (!s.anthropicKey) {
+    const banner = document.createElement("div");
+    banner.id = "first-run-banner";
+    banner.className = "banner banner-a";
+    banner.style.cssText = "position:fixed;bottom:16px;right:16px;left:16px;z-index:400;max-width:480px;margin:0 auto;cursor:pointer;box-shadow:0 4px 24px rgba(0,0,0,.4)";
+    banner.innerHTML = `&#9889; <div><strong>Add your API key to enable email import.</strong> Tap here to go to Settings &rarr;</div>`;
+    banner.onclick = () => { goTo("settings"); banner.remove(); };
+    document.body.appendChild(banner);
+    setTimeout(() => { if(banner.parentNode) banner.remove(); }, 8000);
+  }
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+// Detect layout first
+initLayout();
+
+// Inject ALL page shells into BOTH containers up front
+var allPages = ["dash","shifts","invoices","payments","pharmacies","profile","settings"];
+allPages.forEach(function(page) {
+  ["dt","mb"].forEach(function(prefix) {
+    var el = document.getElementById(prefix + "-page-" + page);
+    if (el) {
+      PAGE_SHELLS[page](el);
+      shellsInitialized[prefix + page] = true;
+    }
+  });
+});
+
+render();
+setTimeout(checkFirstRun, 1200);
+
+window.addEventListener("resize", function() {
+  initLayout();
+  render();
+});
+</script>
+</body>
+</html>

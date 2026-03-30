@@ -17,75 +17,71 @@
   --r:10px;--r2:14px;
   --serif:'Instrument Serif',serif;--sans:'Geist',sans-serif;--mono:'Geist Mono',monospace;
 }
-body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13.5px;min-height:100vh}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;min-height:100vh}
 ::selection{background:rgba(0,196,160,0.25)}
-.shell{display:flex;min-height:100vh}
-.rail{width:200px;flex-shrink:0;background:var(--s1);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:20px 0;position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:200;transition:transform .25s}
+
+/* ── DESKTOP sidebar layout ── */
+#app-desktop{display:flex;min-height:100vh}
+#app-mobile{display:none}
+.rail{width:220px;flex-shrink:0;background:var(--s1);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:20px 0;position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:10}
 .rail-logo{padding:0 18px 22px;border-bottom:1px solid var(--border2);margin-bottom:10px}
 .rail-wordmark{font-family:var(--serif);font-size:19px;color:var(--teal);letter-spacing:-0.3px;font-style:italic}
 .rail-sub{font-size:9.5px;letter-spacing:1.8px;text-transform:uppercase;color:var(--muted);margin-top:1px}
-.nav-link{display:flex;align-items:center;gap:9px;padding:12px 18px;font-size:14px;color:var(--muted);cursor:pointer;transition:all .15s;border-left:2px solid transparent;position:relative;user-select:none;-webkit-tap-highlight-color:transparent}
-.nav-link:hover,.nav-link:active{color:var(--text);background:rgba(255,255,255,0.03)}
+.nav-link{display:flex;align-items:center;gap:9px;padding:12px 18px;font-size:14px;color:var(--muted);cursor:pointer;border-left:3px solid transparent;position:relative;user-select:none}
 .nav-link.on{color:var(--teal);background:var(--tealfade);border-left-color:var(--teal)}
 .nav-badge{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:var(--red);color:#fff;font-size:9.5px;padding:1px 5px;border-radius:99px;font-weight:600}
 .nav-badge.amber{background:var(--amber);color:#000}
 .rail-foot{margin-top:auto;padding:14px 18px 0;border-top:1px solid var(--border2);font-size:10.5px;color:var(--muted);line-height:1.6;font-family:var(--mono)}
-.main{flex:1;overflow-y:auto;background:var(--bg);margin-left:200px}
+.main{flex:1;overflow-y:auto;background:var(--bg);margin-left:220px;min-height:100vh}
 .page{padding:28px 32px;max-width:1060px;display:none}
 .page.active{display:block}
-.topbar{display:none;position:fixed;top:0;left:0;right:0;height:52px;background:var(--s1);border-bottom:1px solid var(--border);z-index:300;align-items:center;padding:0 16px;gap:12px}
-.topbar-wordmark{font-family:var(--serif);font-size:18px;color:var(--teal);font-style:italic;flex:1}
-.topbar-menu-btn{background:none;border:none;color:var(--text);font-size:22px;cursor:pointer;padding:8px;-webkit-tap-highlight-color:transparent;line-height:1;touch-action:manipulation}
-.drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:199}
-.drawer-overlay.open{display:block}
-@media(max-width:900px){
-  .topbar{display:flex}
-  .rail{transform:translateX(-220px);top:0;padding-top:60px}
-  .rail.open{transform:translateX(0);box-shadow:4px 0 24px rgba(0,0,0,.5)}
-  .main{margin-left:0;padding-top:52px}
-  .page{padding:16px 14px}
-  .stat-row{grid-template-columns:repeat(2,1fr)}
-  .frow{grid-template-columns:1fr}
-  .modal{width:calc(100vw - 24px);max-width:100%;padding:18px;border-radius:12px}
-  .modal-lg{width:calc(100vw - 24px)}
-  .ph{flex-direction:column;gap:10px}
-  .ph .flex{flex-wrap:wrap}
-  table{font-size:12px}
-  th,td{padding:8px 8px}
-  .btn{padding:9px 14px;font-size:13px;touch-action:manipulation}
-  .btn-sm{padding:8px 12px;font-size:12px}
-  .inv-wrap{padding:20px 16px}
-  .inv-addrs{grid-template-columns:1fr}
-  .tabs{width:100%}
-  .tab{flex:1;text-align:center}
-}
-.ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;gap:16px}
+
+/* ── MOBILE layout ── */
+#mob-topbar{background:var(--s1);border-bottom:1px solid var(--border);padding:0 16px;height:50px;display:flex;align-items:center;justify-content:space-between;position:fixed;top:0;left:0;right:0;z-index:100}
+#mob-topbar-title{font-family:var(--serif);font-size:19px;color:var(--teal);font-style:italic}
+#mob-menu-btn{background:var(--s2);border:1px solid var(--border);color:var(--text);font-size:18px;width:40px;height:40px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+#mob-main{margin-top:50px;margin-bottom:60px;overflow-y:auto;background:var(--bg);min-height:calc(100vh - 110px)}
+#mob-main .page{padding:14px 12px;display:none}
+#mob-main .page.active{display:block}
+#mob-bottomnav{position:fixed;bottom:0;left:0;right:0;height:60px;background:var(--s1);border-top:1px solid var(--border);display:flex;align-items:stretch;z-index:100}
+.mob-nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--muted);cursor:pointer;font-size:9px;letter-spacing:.3px;text-transform:uppercase;border:none;background:none;padding:0;position:relative;-webkit-tap-highlight-color:transparent}
+.mob-nav-btn.on{color:var(--teal)}
+.mob-nav-btn span.icon{font-size:18px;line-height:1}
+.mob-nav-dot{position:absolute;top:8px;right:calc(50% - 14px);width:7px;height:7px;background:var(--red);border-radius:50%;display:none}
+.mob-nav-dot.amber{background:var(--amber)}
+/* drawer menu for extra pages */
+#mob-drawer{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.75)}
+#mob-drawer-inner{position:absolute;right:0;top:0;bottom:0;width:240px;background:var(--s1);border-left:1px solid var(--border);padding:60px 0 20px;overflow-y:auto}
+#mob-drawer .nav-link{padding:16px 20px;font-size:15px}
+
+/* ── Shared component styles ── */
+.ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap}
 .ph-left{}
-.ph-title{font-family:var(--serif);font-size:26px;font-style:italic;color:var(--text);line-height:1.1}
+.ph-title{font-family:var(--serif);font-size:24px;font-style:italic;color:var(--text);line-height:1.1}
 .ph-sub{font-size:12px;color:var(--muted);margin-top:3px}
-.stat-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:24px}
-.stat{background:var(--s2);border:1px solid var(--border);border-radius:var(--r2);padding:16px 18px}
+.stat-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px}
+.stat{background:var(--s2);border:1px solid var(--border);border-radius:var(--r2);padding:14px 16px}
 .stat-l{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
-.stat-v{font-family:var(--serif);font-size:30px;color:var(--text);margin:3px 0 1px;line-height:1}
+.stat-v{font-family:var(--serif);font-size:28px;color:var(--text);margin:3px 0 1px;line-height:1}
 .stat-d{font-size:11px;color:var(--muted);font-family:var(--mono)}
 .stat.hi .stat-v{color:var(--teal)}.stat.warn .stat-v{color:var(--amber)}.stat.danger .stat-v{color:var(--red)}
-.card{background:var(--s2);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;margin-bottom:16px}
-.card-head{display:flex;align-items:center;padding:14px 18px;border-bottom:1px solid var(--border2);gap:10px}
+.card{background:var(--s2);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;margin-bottom:14px}
+.card-head{display:flex;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border2);gap:10px}
 .card-title{font-size:13px;font-weight:600;color:var(--text)}
 table{width:100%;border-collapse:collapse}
-th{font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);font-weight:500;padding:9px 14px;text-align:left;border-bottom:1px solid var(--border2)}
-td{padding:11px 14px;border-bottom:1px solid var(--border2);vertical-align:middle}
+th{font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);font-weight:500;padding:9px 12px;text-align:left;border-bottom:1px solid var(--border2)}
+td{padding:10px 12px;border-bottom:1px solid var(--border2);vertical-align:middle;font-size:13px}
 tr:last-child td{border-bottom:none}
-tbody tr{transition:background .1s}
 tbody tr:hover td{background:rgba(255,255,255,0.015)}
 .tr-danger td{background:rgba(240,66,85,0.05)}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:12.5px;font-weight:500;cursor:pointer;border:none;font-family:var(--sans);transition:all .15s;white-space:nowrap;text-decoration:none}
-.btn-p{background:var(--teal);color:#000;font-weight:600}.btn-p:hover{background:var(--teal2)}
-.btn-s{background:var(--s3);color:var(--text);border:1px solid var(--border)}.btn-s:hover{border-color:var(--teal);color:var(--teal)}
-.btn-g{background:transparent;color:var(--muted);border:1px solid var(--border)}.btn-g:hover{color:var(--text);border-color:var(--subtle)}
-.btn-d{background:rgba(240,66,85,0.12);color:var(--red);border:1px solid rgba(240,66,85,0.2)}.btn-d:hover{background:rgba(240,66,85,0.2)}
-.btn-pay{background:rgba(0,196,160,0.1);color:var(--teal);border:1px solid rgba(0,196,160,0.25)}.btn-pay:hover{background:rgba(0,196,160,0.18)}
-.btn-sm{padding:5px 10px;font-size:11.5px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:none;font-family:var(--sans);white-space:nowrap;text-decoration:none;-webkit-tap-highlight-color:transparent}
+.btn-p{background:var(--teal);color:#000;font-weight:600}
+.btn-s{background:var(--s3);color:var(--text);border:1px solid var(--border)}
+.btn-g{background:transparent;color:var(--muted);border:1px solid var(--border)}
+.btn-d{background:rgba(240,66,85,0.12);color:var(--red);border:1px solid rgba(240,66,85,0.2)}
+.btn-pay{background:rgba(0,196,160,0.1);color:var(--teal);border:1px solid rgba(0,196,160,0.25)}
+.btn-sm{padding:6px 11px;font-size:12px}
 .badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:500}
 .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;display:inline-block}
 .tag{display:inline-flex;padding:2px 7px;border-radius:4px;font-size:10.5px;font-family:var(--mono)}
@@ -93,73 +89,71 @@ tbody tr:hover td{background:rgba(255,255,255,0.015)}
 .tag-auto{background:rgba(92,100,120,0.2);color:var(--subtle)}
 .tag-done{background:rgba(0,196,160,0.1);color:var(--teal)}
 .tag-over{background:rgba(240,66,85,0.12);color:var(--red)}
-.banner{display:flex;align-items:flex-start;gap:10px;padding:12px 16px;border-radius:var(--r);margin-bottom:14px;font-size:12.5px;line-height:1.5}
+.banner{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:var(--r);margin-bottom:12px;font-size:13px;line-height:1.5}
 .banner-a{background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.2);color:var(--amber)}
 .banner-r{background:rgba(240,66,85,0.07);border:1px solid rgba(240,66,85,0.18);color:var(--red)}
 .banner-t{background:var(--tealfade);border:1px solid rgba(0,196,160,0.2);color:var(--teal)}
-.tabs{display:flex;gap:3px;background:var(--s2);border:1px solid var(--border);border-radius:9px;padding:3px;width:fit-content;margin-bottom:16px}
-.tab{padding:6px 14px;border-radius:6px;font-size:12.5px;cursor:pointer;color:var(--muted);transition:all .15s;user-select:none}
+.tabs{display:flex;gap:3px;background:var(--s2);border:1px solid var(--border);border-radius:9px;padding:3px;margin-bottom:14px;flex-wrap:wrap}
+.tab{padding:7px 12px;border-radius:6px;font-size:13px;cursor:pointer;color:var(--muted);user-select:none;-webkit-tap-highlight-color:transparent}
 .tab.on{background:var(--s3);color:var(--text);font-weight:500}
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;z-index:500;backdrop-filter:blur(6px);padding:20px}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:flex-start;justify-content:center;z-index:500;padding:16px;padding-top:60px;overflow-y:auto}
 .overlay.open{display:flex}
-.modal{background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:26px;width:580px;max-height:92vh;overflow-y:auto}
-.modal-lg{width:720px}
-.modal-title{font-family:var(--serif);font-size:21px;font-style:italic;margin-bottom:20px;color:var(--text)}
-.fg{display:flex;flex-direction:column;gap:13px}
-.frow{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.modal{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:22px;width:100%;max-width:560px;max-height:85vh;overflow-y:auto}
+.modal-lg{max-width:700px}
+.modal-title{font-family:var(--serif);font-size:20px;font-style:italic;margin-bottom:18px;color:var(--text)}
+.fg{display:flex;flex-direction:column;gap:12px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .fl{display:flex;flex-direction:column;gap:5px}
-label{font-size:11px;letter-spacing:.5px;color:var(--muted);display:block}
-input,select,textarea{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:8px 11px;color:var(--text);font-size:13px;font-family:var(--sans);outline:none;transition:border .15s;width:100%}
+label{font-size:12px;letter-spacing:.3px;color:var(--muted);display:block}
+input,select,textarea{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-size:14px;font-family:var(--sans);outline:none;width:100%}
 input:focus,select:focus,textarea:focus{border-color:var(--teal)}
 select option{background:var(--s2)}
-.cbrow{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text);padding:2px 0}
-.cbrow input[type=checkbox]{width:auto;accent-color:var(--teal);cursor:pointer}
-.fa{display:flex;gap:9px;justify-content:flex-end;margin-top:4px}
-.divider{border:none;border-top:1px solid var(--border2);margin:4px 0}
-.hint{font-size:11px;color:var(--muted);margin-top:3px}
-.calc-box{background:var(--s3);border:1px solid var(--border);border-radius:8px;padding:11px 14px;font-size:12.5px;color:var(--subtle)}
-.err-msg{color:var(--red);font-size:12px;padding:6px 10px;background:rgba(240,66,85,0.08);border-radius:6px}
+.cbrow{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;color:var(--text);padding:4px 0}
+.cbrow input[type=checkbox]{width:20px;height:20px;accent-color:var(--teal);cursor:pointer;flex-shrink:0}
+.fa{display:flex;gap:9px;justify-content:flex-end;margin-top:6px;flex-wrap:wrap}
+.divider{border:none;border-top:1px solid var(--border2);margin:6px 0}
+.hint{font-size:12px;color:var(--muted);margin-top:3px}
+.calc-box{background:var(--s3);border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-size:13px;color:var(--subtle)}
+.err-msg{color:var(--red);font-size:13px;padding:8px 12px;background:rgba(240,66,85,0.08);border-radius:6px}
 .empty{text-align:center;padding:44px 24px;color:var(--muted)}
 .empty-i{font-size:28px;margin-bottom:10px}
-.empty-t{font-size:13.5px;margin-bottom:4px;color:var(--subtle)}
+.empty-t{font-size:14px;margin-bottom:4px;color:var(--subtle)}
 .flex{display:flex}.aic{align-items:center}.gap-2{gap:8px}.gap-3{gap:12px}.mla{margin-left:auto}.mt-8{margin-top:8px}.mt-16{margin-top:16px}
-.fw6{font-weight:600}.mono{font-family:var(--mono)}.small{font-size:11.5px}.smaller{font-size:11px}.c-muted{color:var(--muted)}.c-teal{color:var(--teal)}.c-red{color:var(--red)}.c-amber{color:var(--amber)}
-/* Invoice styles */
-.inv-wrap{background:#fff;color:#111;padding:36px 40px;font-family:'Geist',sans-serif;font-size:12.5px;line-height:1.5}
-.inv-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px}
+.fw6{font-weight:600}.mono{font-family:var(--mono)}.small{font-size:12px}.smaller{font-size:11px}.c-muted{color:var(--muted)}.c-teal{color:var(--teal)}.c-red{color:var(--red)}.c-amber{color:var(--amber)}
+/* Invoice print styles */
+.inv-wrap{background:#fff;color:#111;padding:32px 36px;font-family:'Geist',sans-serif;font-size:12.5px;line-height:1.5}
+.inv-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap;gap:12px}
 .inv-brand{font-family:'Instrument Serif',serif;font-size:22px;color:#00875f;font-style:italic}
 .inv-brand-sub{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:#9ca3af;margin-top:1px}
 .inv-num-block{text-align:right}
 .inv-num-n{font-size:17px;font-weight:700;color:#111}
 .inv-meta{font-size:11px;color:#6b7280;margin-top:3px}
-.inv-addrs{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;padding:16px;background:#f9fafb;border-radius:8px}
+.inv-addrs{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;padding:14px;background:#f9fafb;border-radius:8px}
 .inv-al{font-size:9.5px;letter-spacing:1px;text-transform:uppercase;color:#9ca3af;margin-bottom:5px}
 .inv-an{font-weight:700;font-size:13px;color:#111}
 .inv-ad{font-size:11.5px;color:#4b5563;margin-top:2px;line-height:1.6}
 .inv-gphc{display:inline-block;margin-top:4px;font-size:10px;background:#e0faf4;color:#065f46;padding:1px 7px;border-radius:4px;font-weight:600}
-table.inv-t{width:100%;border-collapse:collapse;margin-bottom:20px}
-table.inv-t th{background:#f3f4f6;padding:7px 11px;text-align:left;font-size:10px;letter-spacing:.5px;text-transform:uppercase;color:#6b7280;border-bottom:none}
-table.inv-t td{padding:9px 11px;border-bottom:1px solid #f3f4f6;color:#374151;font-size:12px}
-.inv-totals{display:flex;justify-content:flex-end;margin-bottom:16px}
+table.inv-t{width:100%;border-collapse:collapse;margin-bottom:18px}
+table.inv-t th{background:#f3f4f6;padding:7px 10px;text-align:left;font-size:10px;letter-spacing:.5px;text-transform:uppercase;color:#6b7280}
+table.inv-t td{padding:8px 10px;border-bottom:1px solid #f3f4f6;color:#374151;font-size:12px}
+.inv-totals{display:flex;justify-content:flex-end;margin-bottom:14px}
 .inv-totals table{width:220px}
 .inv-totals td{padding:5px 8px;font-size:13px;color:#374151;border:none}
-.inv-grand td{font-weight:700;font-size:15px;color:#00875f;border-top:2px solid #e5e7eb !important;padding-top:9px}
-.inv-terms{border-top:1px solid #e5e7eb;padding-top:14px;font-size:10.5px;color:#9ca3af;margin-top:4px;line-height:1.7}
-.inv-notebox{background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:10px 12px;font-size:11px;color:#92400e;margin-bottom:16px}
+.inv-grand td{font-weight:700;font-size:15px;color:#00875f;border-top:2px solid #e5e7eb !important;padding-top:8px}
+.inv-terms{border-top:1px solid #e5e7eb;padding-top:12px;font-size:10.5px;color:#9ca3af;margin-top:4px;line-height:1.7}
+.inv-notebox{background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:10px 12px;font-size:11px;color:#92400e;margin-bottom:14px}
 .inv-exp-row{background:#fffbeb}
-/* Print */
 @media print{
-  .rail,.modal-actions,.btn,.overlay{display:none!important}
-  .main{margin-left:0}
+  #app-mobile,#app-desktop .rail,#app-desktop .main .btn,.overlay{display:none!important}
+  .main{margin-left:0!important}
   body{background:white}
   #print-area{display:block!important;position:static!important;padding:0!important}
 }
 #print-area{display:none;position:fixed;inset:0;background:white;z-index:9999;padding:32px;overflow:auto}
-/* Import modal */
 .import-step{display:none}.import-step.active{display:block}
 .parsing-spinner{text-align:center;padding:32px;color:var(--muted);font-size:13px}
-.parsed-field{background:var(--s3);border:1px solid var(--border);border-radius:8px;padding:10px 13px;margin-bottom:8px;display:flex;align-items:center;gap:10px}
-.parsed-label{font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);width:100px;flex-shrink:0}
+.parsed-field{background:var(--s3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.parsed-label{font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);width:90px;flex-shrink:0}
 .parsed-val{font-size:13px;color:var(--text);flex:1}
 .confidence-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .conf-high{background:var(--teal)}.conf-med{background:var(--amber)}.conf-low{background:var(--red)}
@@ -167,213 +161,88 @@ table.inv-t td{padding:9px 11px;border-bottom:1px solid #f3f4f6;color:#374151;fo
 .sheets-ok{background:rgba(0,196,160,0.1);color:var(--teal);border:1px solid rgba(0,196,160,0.2)}
 .sheets-err{background:rgba(240,66,85,0.08);color:var(--red);border:1px solid rgba(240,66,85,0.2)}
 .sheets-pending{background:rgba(92,100,120,0.15);color:var(--subtle);border:1px solid var(--border)}
-.sync-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:4px}
-.sync-ok{background:rgba(0,196,160,0.1);color:var(--teal)}
-.sync-err{background:rgba(240,66,85,0.1);color:var(--red)}
-.sync-pending{background:rgba(92,100,120,0.1);color:var(--muted)}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
 
-<!-- Mobile topbar -->
-<div class="topbar" id="topbar">
-  <button class="topbar-menu-btn" id="menu-btn" onclick="toggleDrawer()">&#9776;</button>
-  <div class="topbar-wordmark">Pharmiverse</div>
-  <span class="nav-badge" id="topbar-badge-payments" style="display:none;position:static;transform:none"></span>
-</div>
-<div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
-
-<div class="shell">
-  <!-- Sidebar -->
-  <nav class="rail" id="rail">
+<!-- ═══ DESKTOP LAYOUT ═══ -->
+<div id="app-desktop">
+  <nav class="rail" id="rail-desktop">
     <div class="rail-logo">
       <div class="rail-wordmark">Pharmiverse</div>
       <div class="rail-sub">Locum Hub</div>
     </div>
-    <div class="nav-link on" data-page="dash">
-      <span>&#9670;</span> Dashboard
-    </div>
-    <div class="nav-link" data-page="shifts">
-      <span>&#9201;</span> Shifts
-      <span class="nav-badge amber" id="badge-shifts" style="display:none"></span>
-    </div>
-    <div class="nav-link" data-page="invoices">
-      <span>&#9671;</span> Invoices
-    </div>
-    <div class="nav-link" data-page="payments">
-      <span>&#10763;</span> Payments
-      <span class="nav-badge" id="badge-payments" style="display:none"></span>
-    </div>
-    <div class="nav-link" data-page="pharmacies">
-      <span>&#8853;</span> Pharmacies
-    </div>
-    <div class="nav-link" data-page="profile">
-      <span>&#9677;</span> My Profile
-    </div>
-    <div class="nav-link" data-page="settings">
-      <span>&#9881;</span> Settings
-    </div>
+    <div class="nav-link on" id="dnl-dash" onclick="goTo('dash')"><span>&#9670;</span> Dashboard</div>
+    <div class="nav-link" id="dnl-shifts" onclick="goTo('shifts')"><span>&#9201;</span> Shifts<span class="nav-badge amber" id="badge-shifts" style="display:none"></span></div>
+    <div class="nav-link" id="dnl-invoices" onclick="goTo('invoices')"><span>&#9671;</span> Invoices</div>
+    <div class="nav-link" id="dnl-payments" onclick="goTo('payments')"><span>&#10763;</span> Payments<span class="nav-badge" id="badge-payments" style="display:none"></span></div>
+    <div class="nav-link" id="dnl-pharmacies" onclick="goTo('pharmacies')"><span>&#8853;</span> Pharmacies</div>
+    <div class="nav-link" id="dnl-profile" onclick="goTo('profile')"><span>&#9677;</span> My Profile</div>
+    <div class="nav-link" id="dnl-settings" onclick="goTo('settings')"><span>&#9881;</span> Settings</div>
     <div class="rail-foot">Pharmiverse<br>Solutions Ltd</div>
   </nav>
-
-  <!-- Main content -->
-  <main class="main">
-
-    <!-- Dashboard -->
-    <div class="page active" id="page-dash">
-      <div class="ph">
-        <div class="ph-left">
-          <div class="ph-title" id="dash-greeting">Good morning</div>
-          <div class="ph-sub" id="dash-date"></div>
-        </div>
-      </div>
-      <div id="dash-banners"></div>
-      <div class="stat-row" id="dash-stats"></div>
-      <div class="card" id="dash-recent"></div>
-      <div id="dash-overdue"></div>
-    </div>
-
-    <!-- Shifts -->
-    <div class="page" id="page-shifts">
-      <div class="ph">
-        <div class="ph-left">
-          <div class="ph-title">Shifts</div>
-          <div class="ph-sub" id="shifts-sub"></div>
-        </div>
-        <div class="flex gap-2">
-          <button class="btn btn-s" onclick="openImportModal()">&#9889; Import from Email</button>
-          <button class="btn btn-p" onclick="openShiftModal()">+ Log Shift</button>
-        </div>
-      </div>
-      <div class="tabs" id="shift-tabs">
-        <div class="tab on" data-filter="all">All Shifts</div>
-        <div class="tab" data-filter="uninvoiced" id="tab-uninvoiced">Needs Invoice</div>
-        <div class="tab" data-filter="backlog" id="tab-backlog">Jan/Feb Backlog</div>
-      </div>
-      <div class="card" id="shifts-table"></div>
-    </div>
-
-    <!-- Invoices -->
-    <div class="page" id="page-invoices">
-      <div class="ph">
-        <div class="ph-left">
-          <div class="ph-title">Invoices</div>
-          <div class="ph-sub" id="invoices-sub"></div>
-        </div>
-      </div>
-      <div id="invoice-groups"></div>
-      <div class="tabs" id="invoice-tabs">
-        <div class="tab on" data-filter="pending">Unpaid</div>
-        <div class="tab" data-filter="paid">Paid</div>
-        <div class="tab" data-filter="all">All</div>
-      </div>
-      <div class="card" id="invoices-table"></div>
-    </div>
-
-    <!-- Payments -->
-    <div class="page" id="page-payments">
-      <div class="ph">
-        <div class="ph-left">
-          <div class="ph-title">Payment Tracker</div>
-          <div class="ph-sub">Your terms: 14 days &middot; Most contractors pay end of following month</div>
-        </div>
-      </div>
-      <div class="card" id="payments-table"></div>
-    </div>
-
-    <!-- Pharmacies -->
-    <div class="page" id="page-pharmacies">
-      <div class="ph">
-        <div class="ph-left">
-          <div class="ph-title">Pharmacies</div>
-          <div class="ph-sub" id="pharmacies-sub"></div>
-        </div>
-        <button class="btn btn-p" onclick="openPharmacyModal()">+ Add Pharmacy</button>
-      </div>
-      <div class="card" id="pharmacies-table"></div>
-    </div>
-
-    <!-- Profile -->
-    <div class="page" id="page-profile">
-      <div class="ph">
-        <div class="ph-left">
-          <div class="ph-title">My Profile</div>
-          <div class="ph-sub">Your details appear on every invoice you generate</div>
-        </div>
-      </div>
-      <div class="card" style="padding:22px 24px" id="profile-form-wrap"></div>
-    </div>
-
-    <!-- Settings -->
-    <div class="page" id="page-settings">
-      <div class="ph">
-        <div class="ph-left">
-          <div class="ph-title">Settings</div>
-          <div class="ph-sub">API keys and integrations</div>
-        </div>
-      </div>
-      <div class="card" style="padding:22px 24px;margin-bottom:16px" id="settings-anthropic-wrap"></div>
-      <div class="card" style="padding:22px 24px;margin-bottom:16px" id="settings-sheets-wrap"></div>
-      <div class="card" style="padding:22px 24px" id="settings-calendar-wrap"></div>
-    </div>
-
+  <main class="main" id="main-desktop">
+    <div class="page active" id="dt-page-dash"></div>
+    <div class="page" id="dt-page-shifts"></div>
+    <div class="page" id="dt-page-invoices"></div>
+    <div class="page" id="dt-page-payments"></div>
+    <div class="page" id="dt-page-pharmacies"></div>
+    <div class="page" id="dt-page-profile"></div>
+    <div class="page" id="dt-page-settings"></div>
   </main>
 </div>
 
-<!-- Shift Modal -->
-<div class="overlay" id="shift-modal">
-  <div class="modal">
-    <div class="modal-title" id="shift-modal-title">Log New Shift</div>
-    <div class="fg" id="shift-form"></div>
+<!-- ═══ MOBILE LAYOUT ═══ -->
+<div id="app-mobile">
+  <div id="mob-topbar">
+    <div id="mob-topbar-title">Pharmiverse</div>
+    <button id="mob-menu-btn" onclick="mobMenuToggle()">&#8943;</button>
+  </div>
+  <div id="mob-main">
+    <div class="page active" id="mb-page-dash"></div>
+    <div class="page" id="mb-page-shifts"></div>
+    <div class="page" id="mb-page-invoices"></div>
+    <div class="page" id="mb-page-payments"></div>
+    <div class="page" id="mb-page-pharmacies"></div>
+    <div class="page" id="mb-page-profile"></div>
+    <div class="page" id="mb-page-settings"></div>
+  </div>
+  <div id="mob-bottomnav">
+    <button class="mob-nav-btn on" id="mbn-dash" onclick="goTo('dash')"><span class="icon">&#9670;</span><span>Home</span></button>
+    <button class="mob-nav-btn" id="mbn-shifts" onclick="goTo('shifts')"><span class="icon">&#9201;</span><span>Shifts</span><span class="mob-nav-dot" id="mob-dot-shifts" style="display:none"></span></button>
+    <button class="mob-nav-btn" id="mbn-invoices" onclick="goTo('invoices')"><span class="icon">&#9671;</span><span>Invoices</span></button>
+    <button class="mob-nav-btn" id="mbn-payments" onclick="goTo('payments')"><span class="icon">&#10763;</span><span>Payments</span><span class="mob-nav-dot" id="mob-dot-payments" style="display:none"></span></button>
+    <button class="mob-nav-btn" id="mbn-more" onclick="mobMenuToggle()"><span class="icon">&#8943;</span><span>More</span></button>
+  </div>
+  <!-- drawer for extra pages -->
+  <div id="mob-drawer" onclick="mobDrawerClose(event)">
+    <div id="mob-drawer-inner">
+      <div class="nav-link" onclick="mobGoTo('pharmacies')">&#8853; Pharmacies</div>
+      <div class="nav-link" onclick="mobGoTo('profile')">&#9677; My Profile</div>
+      <div class="nav-link" onclick="mobGoTo('settings')">&#9881; Settings</div>
+    </div>
   </div>
 </div>
 
-<!-- Pharmacy Modal -->
-<div class="overlay" id="pharmacy-modal">
-  <div class="modal">
-    <div class="modal-title" id="pharmacy-modal-title">Add Pharmacy</div>
-    <div class="fg" id="pharmacy-form"></div>
-  </div>
-</div>
-
-<!-- Invoice Preview Modal -->
-<div class="overlay" id="invoice-modal">
-  <div class="modal modal-lg" id="invoice-modal-inner">
-    <div class="flex aic gap-2" style="margin-bottom:16px" id="invoice-modal-head"></div>
-    <div id="invoice-preview-wrap"></div>
-    <div id="invoice-modal-tip" style="margin-top:12px;font-size:11px;color:var(--muted);text-align:center"></div>
-  </div>
-</div>
-
-<!-- Create Invoice Modal -->
-<div class="overlay" id="create-invoice-modal">
-  <div class="modal">
-    <div class="modal-title">Generate Invoice</div>
-    <div class="fg" id="create-invoice-form"></div>
-  </div>
-</div>
-
-<!-- Import Booking Modal -->
+<!-- Modals (shared) -->
+<div class="overlay" id="shift-modal"><div class="modal"><div class="modal-title" id="shift-modal-title">Log New Shift</div><div class="fg" id="shift-form"></div></div></div>
+<div class="overlay" id="pharmacy-modal"><div class="modal"><div class="modal-title" id="pharmacy-modal-title">Add Pharmacy</div><div class="fg" id="pharmacy-form"></div></div></div>
+<div class="overlay" id="invoice-modal"><div class="modal modal-lg" id="invoice-modal-inner"><div class="flex aic gap-2" style="margin-bottom:14px" id="invoice-modal-head"></div><div id="invoice-preview-wrap"></div><div id="invoice-modal-tip" style="margin-top:10px;font-size:11px;color:var(--muted);text-align:center"></div></div></div>
+<div class="overlay" id="create-invoice-modal"><div class="modal"><div class="modal-title">Generate Invoice</div><div class="fg" id="create-invoice-form"></div></div></div>
 <div class="overlay" id="import-modal">
-  <div class="modal" style="width:620px">
-    <div class="modal-title">&#9889; Import Booking from Email</div>
+  <div class="modal">
+    <div class="modal-title">⚡ Import Booking from Email</div>
     <div id="import-step-paste" class="import-step active">
       <div class="fg">
-        <div class="banner banner-t" style="margin-bottom:0">Paste your booking confirmation email below. Works with LAL, Locum Prime, and WhatsApp messages. Claude will extract the details automatically.</div>
-        <div class="fl"><label>Email / message content</label><textarea id="import-email-text" rows="10" placeholder="Paste the full booking confirmation email or message here...&#10;&#10;e.g. from Locate a Locum, Locum Prime, or a WhatsApp booking message"></textarea></div>
+        <div class="banner banner-t" style="margin-bottom:0">Paste your booking confirmation email below. Claude will extract shift details automatically.</div>
+        <div class="fl"><label>Email / message content</label><textarea id="import-email-text" rows="8" placeholder="Paste the full booking confirmation here..."></textarea></div>
         <div id="import-err" class="err-msg" style="display:none"></div>
-        <div class="fa">
-          <button class="btn btn-g" onclick="closeModal('import-modal')">Cancel</button>
-          <button class="btn btn-p" id="import-parse-btn" onclick="parseEmail()">&#9889; Extract Details</button>
-        </div>
+        <div class="fa"><button class="btn btn-g" onclick="closeModal('import-modal')">Cancel</button><button class="btn btn-p" onclick="parseEmail()">⚡ Extract Details</button></div>
       </div>
     </div>
     <div id="import-step-parsing" class="import-step">
-      <div class="parsing-spinner">
-        <div style="font-size:32px;margin-bottom:12px;animation:spin 1s linear infinite;display:inline-block">&#9881;</div>
-        <div>Reading booking confirmation&hellip;</div>
-        <div style="font-size:11px;margin-top:6px;color:var(--muted)">Claude is extracting pharmacy, date, hours and rate</div>
-      </div>
+      <div class="parsing-spinner"><div style="font-size:32px;margin-bottom:12px;animation:spin 1s linear infinite;display:inline-block">⚙</div><div>Reading booking confirmation…</div></div>
     </div>
     <div id="import-step-confirm" class="import-step">
       <div class="fg">
@@ -381,17 +250,13 @@ table.inv-t td{padding:9px 11px;border-bottom:1px solid #f3f4f6;color:#374151;fo
         <div id="import-parsed-fields"></div>
         <div class="banner banner-a" id="import-warnings" style="display:none"></div>
         <hr class="divider">
-        <div style="font-size:12px;color:var(--muted)">Review the extracted details above, then confirm to pre-fill the shift form &mdash; you can edit anything before saving.</div>
-        <div class="fa">
-          <button class="btn btn-g" onclick="importBack()">&#8592; Back</button>
-          <button class="btn btn-p" onclick="importConfirm()">Confirm &rarr; Open Shift Form</button>
-        </div>
+        <div style="font-size:12px;color:var(--muted)">Review the details above, then confirm to open the shift form.</div>
+        <div class="fa"><button class="btn btn-g" onclick="importBack()">← Back</button><button class="btn btn-p" onclick="importConfirm()">Confirm → Open Shift Form</button></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Print area -->
 <div id="print-area"></div>
 
 <script>
@@ -427,6 +292,7 @@ let state = {
   invoices: DB.get("pv_invoices") || [],
   pharmacies: DB.get("pv_pharmacies") || [],
   invSeq: DB.get("pv_invseq") || 1,
+  settings: DB.get("pv_settings") || { anthropicKey: "", sheetsUrl: "", sheetsEnabled: false, calendarEnabled: false },
 };
 
 function save() {
@@ -468,24 +334,138 @@ function groupUninvoiced() {
   return Object.values(groups);
 }
 
-// ── Navigation ───────────────────────────────────────────────────────────────
+// ── Layout mode detection ────────────────────────────────────────────────────
+function isMobile() { return window.innerWidth < 900; }
+
+// Get element from active layout container
+function gel(id) {
+  var prefix = isMobile() ? "mb" : "dt";
+  var container = document.getElementById(prefix + "-page-" + state.page);
+  if (container) {
+    var el = container.querySelector("#" + id);
+    if (el) return el;
+  }
+  // fallback to document-wide search
+  return document.getElementById(id);
+}
+
+function initLayout() {
+  if (isMobile()) {
+    document.getElementById("app-desktop").style.display = "none";
+    document.getElementById("app-mobile").style.display = "block";
+  } else {
+    document.getElementById("app-desktop").style.display = "flex";
+    document.getElementById("app-mobile").style.display = "none";
+  }
+}
+
+// ── Page content containers ───────────────────────────────────────────────────
+function getPageEl(page) {
+  var mob = document.getElementById("mb-page-" + page);
+  var desk = document.getElementById("dt-page-" + page);
+  return isMobile() ? mob : desk;
+}
+
+// Page templates (static HTML shells injected once)
+var PAGE_SHELLS = {
+  dash: function(el) {
+    el.innerHTML = '<div class="ph"><div class="ph-left"><div class="ph-title" id="dash-greeting">Good morning</div><div class="ph-sub" id="dash-date"></div></div></div><div id="dash-banners"></div><div class="stat-row" id="dash-stats"></div><div class="card" id="dash-recent"></div><div id="dash-overdue"></div>';
+  },
+  shifts: function(el) {
+    el.innerHTML = '<div class="ph"><div class="ph-left"><div class="ph-title">Shifts</div><div class="ph-sub" id="shifts-sub"></div></div><div class="flex gap-2"><button class="btn btn-s btn-sm" onclick="openImportModal()">⚡ Import Email</button><button class="btn btn-p btn-sm" onclick="openShiftModal()">+ Log Shift</button></div></div><div class="tabs" id="shift-tabs"><div class="tab on" data-filter="all">All</div><div class="tab" data-filter="uninvoiced" id="tab-uninvoiced">Uninvoiced</div><div class="tab" data-filter="backlog" id="tab-backlog">Backlog</div></div><div class="card" id="shifts-table"></div>';
+    document.getElementById("shift-tabs").addEventListener("click", function(e) { var t = e.target.closest(".tab"); if (t) { state.shiftFilter = t.dataset.filter; renderShifts(); } });
+  },
+  invoices: function(el) {
+    el.innerHTML = '<div class="ph"><div class="ph-left"><div class="ph-title">Invoices</div><div class="ph-sub" id="invoices-sub"></div></div></div><div id="invoice-groups"></div><div class="tabs" id="invoice-tabs"><div class="tab on" data-filter="pending">Unpaid</div><div class="tab" data-filter="paid">Paid</div><div class="tab" data-filter="all">All</div></div><div class="card" id="invoices-table"></div>';
+    document.getElementById("invoice-tabs").addEventListener("click", function(e) { var t = e.target.closest(".tab"); if (t) { state.invoiceFilter = t.dataset.filter; renderInvoices(); } });
+  },
+  payments: function(el) {
+    el.innerHTML = '<div class="ph"><div class="ph-left"><div class="ph-title">Payment Tracker</div><div class="ph-sub">14-day terms &middot; Most contractors pay EOM</div></div></div><div class="card" id="payments-table"></div>';
+  },
+  pharmacies: function(el) {
+    el.innerHTML = '<div class="ph"><div class="ph-left"><div class="ph-title">Pharmacies</div><div class="ph-sub" id="pharmacies-sub"></div></div><button class="btn btn-p btn-sm" onclick="openPharmacyModal()">+ Add</button></div><div class="card" id="pharmacies-table"></div>';
+  },
+  profile: function(el) {
+    el.innerHTML = '<div class="ph"><div class="ph-left"><div class="ph-title">My Profile</div><div class="ph-sub">Details appear on every invoice</div></div></div><div class="card" style="padding:20px" id="profile-form-wrap"></div>';
+  },
+  settings: function(el) {
+    el.innerHTML = '<div class="ph"><div class="ph-left"><div class="ph-title">Settings</div><div class="ph-sub">API keys and integrations</div></div></div><div class="card" style="padding:20px;margin-bottom:14px" id="settings-anthropic-wrap"></div><div class="card" style="padding:20px;margin-bottom:14px" id="settings-sheets-wrap"></div><div class="card" style="padding:20px" id="settings-calendar-wrap"></div>';
+  }
+};
+
+var shellsInitialized = {};
+
+function ensureShell(page) {
+  // Only init the currently active layout's container
+  var prefix = isMobile() ? 'mb' : 'dt';
+  var key = prefix + page;
+  if (!shellsInitialized[key]) {
+    var el = document.getElementById(prefix + "-page-" + page);
+    if (el) {
+      PAGE_SHELLS[page](el);
+      shellsInitialized[key] = true;
+    }
+  }
+}
+
+// ── Navigation ────────────────────────────────────────────────────────────────
+var PAGES = ["dash","shifts","invoices","payments","pharmacies","profile","settings"];
+
 function goTo(page) {
   state.page = page;
-  document.querySelectorAll(".page").forEach(el => el.classList.remove("active"));
-  document.querySelectorAll(".nav-link").forEach(el => el.classList.remove("on"));
-  document.getElementById("page-" + page).classList.add("active");
-  document.querySelector(`.nav-link[data-page="${page}"]`).classList.add("on");
+  initLayout();
+
+  // Update desktop nav highlights
+  PAGES.forEach(function(p) {
+    var el = document.getElementById("dnl-" + p);
+    if (el) el.className = "nav-link" + (p === page ? " on" : "");
+  });
+
+  // Update desktop page visibility
+  PAGES.forEach(function(p) {
+    var el = document.getElementById("dt-page-" + p);
+    if (el) el.className = "page" + (p === page ? " active" : "");
+  });
+
+  // Update mobile bottom nav highlights
+  ["dash","shifts","invoices","payments"].forEach(function(p) {
+    var el = document.getElementById("mbn-" + p);
+    if (el) el.className = "mob-nav-btn" + (p === page ? " on" : "");
+  });
+
+  // Update mobile page visibility
+  PAGES.forEach(function(p) {
+    var el = document.getElementById("mb-page-" + p);
+    if (el) el.className = "page" + (p === page ? " active" : "");
+  });
+
   render();
 }
 
-document.querySelectorAll(".nav-link").forEach(el => {
-  el.addEventListener("click", () => goTo(el.dataset.page));
-});
+// Nav handled via inline onclick attributes
+
+// Mobile drawer nav
+function mobGoTo(page) {
+  document.getElementById("mob-drawer").style.display = "none";
+  goTo(page);
+}
+
+function mobMenuToggle() {
+  var d = document.getElementById("mob-drawer");
+  d.style.display = (d.style.display === "block") ? "none" : "block";
+}
+
+function mobDrawerClose(e) {
+  if (e.target === document.getElementById("mob-drawer")) {
+    document.getElementById("mob-drawer").style.display = "none";
+  }
+}
 
 // ── Render dispatcher ────────────────────────────────────────────────────────
 function render() {
   updateBadges();
-  const p = state.page;
+  ensureShell(state.page);
+  var p = state.page;
   if (p === "dash") renderDash();
   else if (p === "shifts") renderShifts();
   else if (p === "invoices") renderInvoices();
@@ -496,19 +476,23 @@ function render() {
 }
 
 function updateBadges() {
-  const u = uninvoiced().length;
-  const o = overdueInv().length;
-  const bs = document.getElementById("badge-shifts");
-  const bp = document.getElementById("badge-payments");
-  bs.textContent = u; bs.style.display = u > 0 ? "" : "none";
-  bp.textContent = o; bp.style.display = o > 0 ? "" : "none";
+  var u = uninvoiced().length;
+  var o = overdueInv().length;
+  var bs = document.getElementById("badge-shifts");
+  var bp = document.getElementById("badge-payments");
+  if(bs){bs.textContent = u; bs.style.display = u > 0 ? "" : "none";}
+  if(bp){bp.textContent = o; bp.style.display = o > 0 ? "" : "none";}
+  var md = document.getElementById("mob-dot-shifts");
+  var mp = document.getElementById("mob-dot-payments");
+  if(md) md.style.display = u > 0 ? "block" : "none";
+  if(mp) mp.style.display = o > 0 ? "block" : "none";
 }
 
 // ── Dashboard ─────────────────────────────────────────────────────────────────
 function renderDash() {
   const now = new Date();
-  document.getElementById("dash-greeting").textContent = now.getHours() < 12 ? "Good morning" : "Good afternoon";
-  document.getElementById("dash-date").textContent = now.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  gel("dash-greeting").textContent = now.getHours() < 12 ? "Good morning" : "Good afternoon";
+  gel("dash-date").textContent = now.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
 
   // Banners
   let banners = "";
@@ -516,7 +500,7 @@ function renderDash() {
   const od = overdueInv();
   if (bl > 0) banners += `<div class="banner banner-a">&#9888; <div><strong>${bl} uninvoiced shift${bl > 1 ? "s" : ""}</strong> from Jan/Feb still need invoicing. <span style="cursor:pointer;text-decoration:underline" onclick="goTo('invoices')">Generate invoices &rarr;</span></div></div>`;
   if (od.length > 0) banners += `<div class="banner banner-r">&#9888; <div><strong>${od.length} overdue invoice${od.length > 1 ? "s" : ""}</strong> &mdash; ${fmtGBP(od.reduce((a,i)=>a+i.total,0))} past due. <span style="cursor:pointer;text-decoration:underline" onclick="goTo('payments')">Chase payments &rarr;</span></div></div>`;
-  document.getElementById("dash-banners").innerHTML = banners;
+  gel("dash-banners").innerHTML = banners;
 
   // Stats
   const monthShifts = state.shifts.filter(s => { const d = new Date(s.date + "T12:00:00"); return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear(); });
@@ -524,7 +508,7 @@ function renderDash() {
   const ot = outstandingTotal(), u = uninvoiced().length;
   const ytdMiles = state.shifts.filter(s => new Date(s.date + "T12:00:00").getFullYear() === now.getFullYear()).reduce((a,s) => a + (s.mileage || 0), 0);
   const monthMiles = monthShifts.reduce((a,s) => a + (s.mileage || 0), 0);
-  document.getElementById("dash-stats").innerHTML = `
+  gel("dash-stats").innerHTML = `
     <div class="stat ${ot > 0 ? 'warn' : ''}"><div class="stat-l">Outstanding</div><div class="stat-v">${fmtGBP(ot)}</div><div class="stat-d">${state.invoices.filter(i=>!i.paid).length} unpaid</div></div>
     <div class="stat hi"><div class="stat-l">Paid to date</div><div class="stat-v">${fmtGBP(paidTotal())}</div><div class="stat-d">${state.invoices.filter(i=>i.paid).length} settled</div></div>
     <div class="stat"><div class="stat-l">This month</div><div class="stat-v">${fmtGBP(monthTotal)}</div><div class="stat-d">${monthShifts.length} shifts</div></div>
@@ -541,7 +525,7 @@ function renderDash() {
     recent.forEach(s => { recentHtml += shiftRowHtml(s, false); });
     recentHtml += `</tbody></table>`;
   }
-  document.getElementById("dash-recent").innerHTML = recentHtml;
+  gel("dash-recent").innerHTML = recentHtml;
 
   // Overdue
   let odHtml = "";
@@ -550,13 +534,13 @@ function renderDash() {
     od.forEach(i => { const d = daysBetween(i.dueDate, todayStr()); odHtml += `<tr class="tr-danger"><td class="mono smaller">${esc(i.number)}</td><td class="fw6">${esc(i.pharmacyName)}</td><td class="mono c-red fw6">${fmtGBP(i.total)}</td><td class="c-red smaller">${d}d</td></tr>`; });
     odHtml += `</tbody></table></div>`;
   }
-  document.getElementById("dash-overdue").innerHTML = odHtml;
+  gel("dash-overdue").innerHTML = odHtml;
 }
 
 // ── Shifts ───────────────────────────────────────────────────────────────────
 function renderShifts() {
   const u = uninvoiced().length, bl = backlog().length;
-  document.getElementById("shifts-sub").textContent = `${state.shifts.length} total \u00B7 ${u} need invoicing`;
+  gel("shifts-sub").textContent = `${state.shifts.length} total \u00B7 ${u} need invoicing`;
   document.getElementById("tab-uninvoiced").textContent = `Needs Invoice (${u})`;
   document.getElementById("tab-backlog").textContent = `Jan/Feb (${bl})`;
 
@@ -575,7 +559,7 @@ function renderShifts() {
     filtered.forEach(s => { html += shiftRowHtml(s, true); });
     html += `</tbody></table>`;
   }
-  document.getElementById("shifts-table").innerHTML = html;
+  gel("shifts-table").innerHTML = html;
 
   // Tab state
   document.querySelectorAll("#shift-tabs .tab").forEach(t => {
@@ -583,10 +567,7 @@ function renderShifts() {
   });
 }
 
-document.getElementById("shift-tabs").addEventListener("click", e => {
-  const tab = e.target.closest(".tab");
-  if (tab) { state.shiftFilter = tab.dataset.filter; renderShifts(); }
-});
+// shift-tabs click handled in PAGE_SHELLS
 
 function shiftRowHtml(s, full) {
   const sc = SOURCE_COLOR[s.source] || "#888";
@@ -620,7 +601,7 @@ function shiftRowHtml(s, full) {
 function renderInvoices() {
   const groups = groupUninvoiced();
   const ot = state.invoices.filter(i => !i.paid).reduce((a,i) => a + i.total, 0);
-  document.getElementById("invoices-sub").textContent = `${state.invoices.length} total \u00B7 ${fmtGBP(ot)} outstanding`;
+  gel("invoices-sub").textContent = `${state.invoices.length} total \u00B7 ${fmtGBP(ot)} outstanding`;
 
   // Uninvoiced groups
   let gHtml = "";
@@ -636,7 +617,7 @@ function renderInvoices() {
     });
     gHtml += "</div>";
   }
-  document.getElementById("invoice-groups").innerHTML = gHtml;
+  gel("invoice-groups").innerHTML = gHtml;
 
   // Invoice list
   const f = state.invoiceFilter;
@@ -668,17 +649,14 @@ function renderInvoices() {
     });
     html += "</tbody></table>";
   }
-  document.getElementById("invoices-table").innerHTML = html;
+  gel("invoices-table").innerHTML = html;
 
   document.querySelectorAll("#invoice-tabs .tab").forEach(t => {
     t.classList.toggle("on", t.dataset.filter === f);
   });
 }
 
-document.getElementById("invoice-tabs").addEventListener("click", e => {
-  const tab = e.target.closest(".tab");
-  if (tab) { state.invoiceFilter = tab.dataset.filter; renderInvoices(); }
-});
+// invoice-tabs click handled in PAGE_SHELLS
 
 // ── Payments ──────────────────────────────────────────────────────────────────
 function renderPayments() {
@@ -705,7 +683,7 @@ function renderPayments() {
     });
     html += "</tbody></table>";
   }
-  document.getElementById("payments-table").innerHTML = html;
+  gel("payments-table").innerHTML = html;
 }
 
 function markPaid(id) {
@@ -720,7 +698,7 @@ function markSent(id) {
 
 // ── Pharmacies ────────────────────────────────────────────────────────────────
 function renderPharmacies() {
-  document.getElementById("pharmacies-sub").textContent = `${state.pharmacies.length} saved contractors`;
+  gel("pharmacies-sub").textContent = `${state.pharmacies.length} saved contractors`;
   let html = "";
   if (state.pharmacies.length === 0) {
     html = `<div class="empty"><div class="empty-i">&#8853;</div><div class="empty-t">No pharmacies saved</div><div style="font-size:12px;color:var(--muted)">Save regulars to auto-fill rate, address and email when logging shifts</div></div>`;
@@ -738,7 +716,7 @@ function renderPharmacies() {
     });
     html += "</tbody></table>";
   }
-  document.getElementById("pharmacies-table").innerHTML = html;
+  gel("pharmacies-table").innerHTML = html;
 }
 
 function deletePharmacy(id) {
@@ -749,7 +727,7 @@ function deletePharmacy(id) {
 // ── Profile ───────────────────────────────────────────────────────────────────
 function renderProfile() {
   const p = state.profile;
-  document.getElementById("profile-form-wrap").innerHTML = `
+  gel("profile-form-wrap").innerHTML = `
     <div class="fg">
       <div style="font-weight:600;font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase">Locum Pharmacist</div>
       <div class="frow">
@@ -1286,7 +1264,7 @@ function closeModal(id) {
 });
 
 // ── Settings in state ─────────────────────────────────────────────────────────
-state.settings = DB.get("pv_settings") || { anthropicKey: "", sheetsUrl: "", sheetsEnabled: false, calendarEnabled: false };
+// settings initialised in state object above
 
 function saveSettings() {
   DB.set("pv_settings", state.settings);
@@ -1296,13 +1274,13 @@ function saveSettings() {
 function renderSettings() {
   const s = state.settings;
 
-  document.getElementById("settings-anthropic-wrap").innerHTML = `
+  gel("settings-anthropic-wrap").innerHTML = `
     <div class="fg">
       <div style="font-weight:600;font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase">&#9889; Email Import &mdash; Claude AI</div>
       <div class="banner banner-t" style="margin-bottom:0">The email import feature uses the Anthropic API to read booking confirmations and extract shift details automatically. Requires a free Anthropic API key.</div>
       <div class="fl">
         <label>Anthropic API Key</label>
-        <input type="password" id="s-apikey" value="${esc(s.anthropicKey)}" placeholder="sk-ant-...">
+        <input type="text" id="s-apikey" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" value="${esc(s.anthropicKey)}" placeholder="sk-ant-api03-..." style="font-family:var(--mono);font-size:12px">
         <div class="hint">Get a free key at <strong>console.anthropic.com</strong> &rarr; API Keys. Your key is stored locally in your browser only &mdash; never sent anywhere except Anthropic.</div>
       </div>
       <div id="s-key-status" class="sheets-status sheets-pending" style="${s.anthropicKey ? '' : 'display:none'}">
@@ -1311,7 +1289,7 @@ function renderSettings() {
       <div class="fa"><button class="btn btn-p" onclick="saveApiKey()">Save API Key</button></div>
     </div>`;
 
-  document.getElementById("settings-sheets-wrap").innerHTML = `
+  gel("settings-sheets-wrap").innerHTML = `
     <div class="fg">
       <div style="font-weight:600;font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase">&#9783; Google Sheets Sync</div>
       <div class="banner banner-t" style="margin-bottom:0">Syncs your shifts and invoices to a Google Sheet automatically after every save. Gives you a live backup viewable on any device, shareable with your accountant.</div>
@@ -1346,7 +1324,7 @@ function renderSettings() {
         <button class="btn btn-p" onclick="saveSheetsSettings()">Save &amp; Sync Now</button>
       </div>
     </div>`;
-  document.getElementById("settings-calendar-wrap").innerHTML = `
+  gel("settings-calendar-wrap").innerHTML = `
     <div class="fg">
       <div style="font-weight:600;font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase">&#128197; Google Calendar Sync</div>
       <div class="banner banner-t" style="margin-bottom:0">When you save a shift, it automatically creates a grey calendar event with the shift timings and pharmacy location. Uses the same Apps Script as Sheets &mdash; no extra setup needed if you already configured that.</div>
@@ -1377,11 +1355,13 @@ function renderSettings() {
       </div>
     </div>`;}
 
-  state.settings.anthropicKey = document.getElementById("s-apikey").value.trim();
+function saveApiKey() {
+  const input = document.getElementById("s-apikey") || gel("s-apikey");
+  if (!input) return;
+  state.settings.anthropicKey = input.value.trim();
   saveSettings();
-  const el = document.getElementById("s-key-status");
-  el.className = "sheets-status sheets-ok"; el.style.display = "";
-  el.textContent = state.settings.anthropicKey ? "\u2713 API key saved" : "No key saved";
+  const el = document.getElementById("s-key-status") || gel("s-key-status");
+  if (el) { el.className = "sheets-status sheets-ok"; el.style.display = ""; el.textContent = state.settings.anthropicKey ? "\u2713 API key saved" : "No key saved"; }
 }
 
 function saveSheetsSettings() {
@@ -1430,7 +1410,7 @@ function copyCalendarScript() {
   setTimeout(() => btn.textContent = "Copy to clipboard", 2000);
 }
 
-
+async function testSheetsConnection() {
   const url = document.getElementById("s-sheetsurl").value.trim();
   const el = document.getElementById("s-sheets-status");
   if (!url) { el.style.display=""; el.className="sheets-status sheets-err"; el.textContent="No URL entered."; return; }
@@ -1656,7 +1636,7 @@ async function deleteCalendarEvent(eventId) {
   } catch(e) {}
 }
 
-
+function showAppsScript() {
   const box = document.getElementById("apps-script-box");
   const ta = document.getElementById("apps-script-code");
   ta.value = APPS_SCRIPT_CODE;
@@ -1842,22 +1822,8 @@ const spinStyle = document.createElement("style");
 spinStyle.textContent = "@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}";
 document.head.appendChild(spinStyle);
 
-// ── Drawer (mobile nav) ──────────────────────────────────────────────────────
-function toggleDrawer() {
-  const rail = document.getElementById("rail");
-  const overlay = document.getElementById("drawer-overlay");
-  const isOpen = rail.classList.contains("open");
-  if (isOpen) { closeDrawer(); } else { rail.classList.add("open"); overlay.classList.add("open"); }
-}
-function closeDrawer() {
-  document.getElementById("rail").classList.remove("open");
-  document.getElementById("drawer-overlay").classList.remove("open");
-}
-
-// Close drawer on nav tap (mobile)
-document.querySelectorAll(".nav-link").forEach(el => {
-  el.addEventListener("click", () => { if(window.innerWidth <= 900) closeDrawer(); });
-});
+// ── Mobile nav handled by goTo/mobGoTo ──────────────────────────────────────
+function closeDrawer(){} // kept for compatibility
 
 // ── First-run API key prompt ──────────────────────────────────────────────────
 function checkFirstRun() {
@@ -1875,8 +1841,28 @@ function checkFirstRun() {
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
+// Detect layout first
+initLayout();
+
+// Inject ALL page shells into BOTH containers up front
+var allPages = ["dash","shifts","invoices","payments","pharmacies","profile","settings"];
+allPages.forEach(function(page) {
+  ["dt","mb"].forEach(function(prefix) {
+    var el = document.getElementById(prefix + "-page-" + page);
+    if (el) {
+      PAGE_SHELLS[page](el);
+      shellsInitialized[prefix + page] = true;
+    }
+  });
+});
+
 render();
-setTimeout(checkFirstRun, 800);
+setTimeout(checkFirstRun, 1200);
+
+window.addEventListener("resize", function() {
+  initLayout();
+  render();
+});
 </script>
 </body>
 </html>

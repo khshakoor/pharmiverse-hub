@@ -20,12 +20,12 @@
 body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13.5px;min-height:100vh}
 ::selection{background:rgba(0,196,160,0.25)}
 .shell{display:flex;min-height:100vh}
-.rail{width:200px;flex-shrink:0;background:var(--s1);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:20px 0;position:fixed;top:0;left:0;height:100vh;overflow-y:auto}
+.rail{width:200px;flex-shrink:0;background:var(--s1);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:20px 0;position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:200;transition:transform .25s}
 .rail-logo{padding:0 18px 22px;border-bottom:1px solid var(--border2);margin-bottom:10px}
 .rail-wordmark{font-family:var(--serif);font-size:19px;color:var(--teal);letter-spacing:-0.3px;font-style:italic}
 .rail-sub{font-size:9.5px;letter-spacing:1.8px;text-transform:uppercase;color:var(--muted);margin-top:1px}
-.nav-link{display:flex;align-items:center;gap:9px;padding:9px 18px;font-size:13px;color:var(--muted);cursor:pointer;transition:all .15s;border-left:2px solid transparent;position:relative;user-select:none}
-.nav-link:hover{color:var(--text);background:rgba(255,255,255,0.03)}
+.nav-link{display:flex;align-items:center;gap:9px;padding:12px 18px;font-size:14px;color:var(--muted);cursor:pointer;transition:all .15s;border-left:2px solid transparent;position:relative;user-select:none;-webkit-tap-highlight-color:transparent}
+.nav-link:hover,.nav-link:active{color:var(--text);background:rgba(255,255,255,0.03)}
 .nav-link.on{color:var(--teal);background:var(--tealfade);border-left-color:var(--teal)}
 .nav-badge{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:var(--red);color:#fff;font-size:9.5px;padding:1px 5px;border-radius:99px;font-weight:600}
 .nav-badge.amber{background:var(--amber);color:#000}
@@ -33,6 +33,32 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13
 .main{flex:1;overflow-y:auto;background:var(--bg);margin-left:200px}
 .page{padding:28px 32px;max-width:1060px;display:none}
 .page.active{display:block}
+.topbar{display:none;position:fixed;top:0;left:0;right:0;height:52px;background:var(--s1);border-bottom:1px solid var(--border);z-index:300;align-items:center;padding:0 16px;gap:12px}
+.topbar-wordmark{font-family:var(--serif);font-size:18px;color:var(--teal);font-style:italic;flex:1}
+.topbar-menu-btn{background:none;border:none;color:var(--text);font-size:22px;cursor:pointer;padding:8px;-webkit-tap-highlight-color:transparent;line-height:1;touch-action:manipulation}
+.drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:199}
+.drawer-overlay.open{display:block}
+@media(max-width:900px){
+  .topbar{display:flex}
+  .rail{transform:translateX(-220px);top:0;padding-top:60px}
+  .rail.open{transform:translateX(0);box-shadow:4px 0 24px rgba(0,0,0,.5)}
+  .main{margin-left:0;padding-top:52px}
+  .page{padding:16px 14px}
+  .stat-row{grid-template-columns:repeat(2,1fr)}
+  .frow{grid-template-columns:1fr}
+  .modal{width:calc(100vw - 24px);max-width:100%;padding:18px;border-radius:12px}
+  .modal-lg{width:calc(100vw - 24px)}
+  .ph{flex-direction:column;gap:10px}
+  .ph .flex{flex-wrap:wrap}
+  table{font-size:12px}
+  th,td{padding:8px 8px}
+  .btn{padding:9px 14px;font-size:13px;touch-action:manipulation}
+  .btn-sm{padding:8px 12px;font-size:12px}
+  .inv-wrap{padding:20px 16px}
+  .inv-addrs{grid-template-columns:1fr}
+  .tabs{width:100%}
+  .tab{flex:1;text-align:center}
+}
 .ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;gap:16px}
 .ph-left{}
 .ph-title{font-family:var(--serif);font-size:26px;font-style:italic;color:var(--text);line-height:1.1}
@@ -148,6 +174,14 @@ table.inv-t td{padding:9px 11px;border-bottom:1px solid #f3f4f6;color:#374151;fo
 </style>
 </head>
 <body>
+
+<!-- Mobile topbar -->
+<div class="topbar" id="topbar">
+  <button class="topbar-menu-btn" id="menu-btn" onclick="toggleDrawer()">&#9776;</button>
+  <div class="topbar-wordmark">Pharmiverse</div>
+  <span class="nav-badge" id="topbar-badge-payments" style="display:none;position:static;transform:none"></span>
+</div>
+<div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
 
 <div class="shell">
   <!-- Sidebar -->
@@ -1808,8 +1842,41 @@ const spinStyle = document.createElement("style");
 spinStyle.textContent = "@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}";
 document.head.appendChild(spinStyle);
 
+// ── Drawer (mobile nav) ──────────────────────────────────────────────────────
+function toggleDrawer() {
+  const rail = document.getElementById("rail");
+  const overlay = document.getElementById("drawer-overlay");
+  const isOpen = rail.classList.contains("open");
+  if (isOpen) { closeDrawer(); } else { rail.classList.add("open"); overlay.classList.add("open"); }
+}
+function closeDrawer() {
+  document.getElementById("rail").classList.remove("open");
+  document.getElementById("drawer-overlay").classList.remove("open");
+}
+
+// Close drawer on nav tap (mobile)
+document.querySelectorAll(".nav-link").forEach(el => {
+  el.addEventListener("click", () => { if(window.innerWidth <= 900) closeDrawer(); });
+});
+
+// ── First-run API key prompt ──────────────────────────────────────────────────
+function checkFirstRun() {
+  const s = state.settings;
+  if (!s.anthropicKey) {
+    const banner = document.createElement("div");
+    banner.id = "first-run-banner";
+    banner.className = "banner banner-a";
+    banner.style.cssText = "position:fixed;bottom:16px;right:16px;left:16px;z-index:400;max-width:480px;margin:0 auto;cursor:pointer;box-shadow:0 4px 24px rgba(0,0,0,.4)";
+    banner.innerHTML = `&#9889; <div><strong>Add your API key to enable email import.</strong> Tap here to go to Settings &rarr;</div>`;
+    banner.onclick = () => { goTo("settings"); banner.remove(); };
+    document.body.appendChild(banner);
+    setTimeout(() => { if(banner.parentNode) banner.remove(); }, 8000);
+  }
+}
+
 // ── Init ──────────────────────────────────────────────────────────────────────
 render();
+setTimeout(checkFirstRun, 800);
 </script>
 </body>
 </html>
